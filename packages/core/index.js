@@ -65,13 +65,8 @@ export class Node {
     this.component = component;
   }
 
-  componentDidMount() {}
-  componentDidUpdate() {}
-
   update() {
-    const tree = this.render();
-    
-    this.tree = this.mutateTree(tree);
+    this.tree = this.mutateTree(this.render());
 
     if (this !== this.tree) {
       this.tree.update();
@@ -79,16 +74,8 @@ export class Node {
 
     Util.getFlatChildren(this.tree).forEach(child => child.update && child.update());
     
-    const dom = this.replaceRoot(this.draw());
-    if (!this._mounted) {
-      this._mounted = true;
-      this.props.ref && this.props.ref(this);
-      this.componentDidMount();
-    } else {
-      this.componentDidUpdate();
-    }
-
-    return dom;
+    this.props.ref && this.props.ref(this);
+    return this.replaceRoot(this.draw());
   }
 
   mutateTree(newTree) {

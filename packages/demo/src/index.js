@@ -1,9 +1,8 @@
-/* @jsx Flinch.create */ 
-
 import Flinch, { StatefulNode } from '@flinch/core';
 import { render } from '@flinch/dom';
 import { Observer } from '@flinch/mobx';
 import { observable } from 'mobx';
+import effect from '@flinch/effect';
 
 function FunctionalComponent(props) {
   return <div>Clicked: { props.counter || 0 }</div>;
@@ -23,6 +22,7 @@ class StatefulComponent extends StatefulNode {
     clicked: 0
   }
 
+  @effect() helloThere() {}
 
   render() {
     return <div><button onClick={ () => this.setState({ clicked: this.state.clicked + 1 }) }>+1</button><FunctionalComponent counter={this.state.clicked} />{ this.state.clicked < 10 && 'This will go away at 10' }<StatefulComponent2 /></div>;

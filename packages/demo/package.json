@@ -15,6 +15,7 @@
     "@babel/preset-env": "^7.6.3",
     "@flinch/core": "0.0.1",
     "@flinch/dom": "0.0.1",
+    "@flinch/effect": "0.0.1",
     "@flinch/mobx": "0.0.1",
     "babel-loader": "^8.0.6",
     "html-webpack-plugin": "^3.2.0",

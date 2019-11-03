@@ -1,7 +1,7 @@
 import Flinch, { StatefulNode } from '@flinch/core';
-import { observe } from 'mobx';
+import effect from '@flinch/effect';
 
-/* @jsx Flinch.create */
+import { observe } from 'mobx';
 
 /**
  * Observer wraps a StatefulNode, and triggers a Flinch state change when
@@ -13,6 +13,7 @@ export function Observer(Component) {
   return class ObservedComponent extends StatefulNode {
     state = { mutator: 0 };
 
+    @effect()
     componentDidMount() {
       // TODO: This ref can change if the component's root node changes
       if (this.ref) {
