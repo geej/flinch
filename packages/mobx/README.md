@@ -1,10 +1,10 @@
-# @flitch/mobx
+# @flinch/mobx
 A simple higher-order component to trigger a state change when a MobX observable mutates.
 ## Usage
 ~~~~ 
-import { Observer } from '@flinch/flinch-mobx';
+import Flinch, { StatefulNode } from '@flinch/core';
+import { Observer } from '@flinch/mobx';
 import { observable } from 'mobx';
-import Flinch, { StatefulNode } from '@flinch/flinch-core';
 
 @Observer
 class ObservedNode extends StatefulNode {
