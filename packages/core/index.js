@@ -15,6 +15,7 @@ const Util = {
     const oldTree = node.tree;
     const newTree = node.render();
 
+    let newProps;
     if (oldTree && !Util.isPrimitive(newTree) && oldTree.component === newTree.component && oldTree.props.children.length === newTree.props.children.length) {
       const { children, ...otherProps } = newTree.props;
 
@@ -30,13 +31,15 @@ const Util = {
             return child;
           }
         }
-        return Object.assign(oldTree.props.children[index], { props: child.props });
+        
+        oldTree.props.children[index].update(child.props);
+        return oldTree.props.children[index];
       });
 
-      oldTree.props = { ...otherProps, children: newChildren };
+      newProps = { ...otherProps, children: newChildren };
       node.tree = oldTree;
     } else {
-      node.tree = newTree;
+      node.tree = newTree;    
     }
 
     if (Util.isPrimitive(node.tree)) {
@@ -44,9 +47,10 @@ const Util = {
     }
     
     if (node !== node.tree) {
-      node.tree.update();
+      node.tree.update(newProps);
     }
 
+    // TODO: This calls update twice on some children from the oldTree. This is bad. Fix it.
     Util.getFlatChildren(node.tree).forEach(
       child => child.update && child.update()
     );
@@ -82,14 +86,13 @@ export default class Core {
 }
 
 export class Node {
-  _mounted = false;
-
   constructor(component, props) {
     this.props = props;
     this.component = component;
   }
 
-  update() {
+  update(props = this.props) {
+    this.props = props;
     Util.mutateTree(this);
     this.props.ref && this.props.ref(this);
     return this.replaceRoot(this.draw());

@@ -5,14 +5,24 @@ export default function effect(...props) {
 
       const update = target.update;
 
-      target.update = function() {
-        const result = update.apply(this);
+      target.update = function(newProps) {
+        const changedProps = newProps && Object.keys(this.props).concat(Object.keys(newProps)).reduce((memo, key) => {
+          if (newProps[key] !== this.props[key]) {
+            memo.add(key);
+          }
+          return memo;
+        }, new Set()) || [];
 
+        const result = update.apply(this, [ newProps ]);
         if (!this._mounted) {
           target._lifecycleCallbacks.map(cb => cb.callback.apply(this));
           this._mounted = true;
         } else {
-          // if any of the props have changed, run the callback
+          target._lifecycleCallbacks.forEach(cb => {
+            if (cb.props.filter(prop => Array.from(changedProps).includes(prop)).length) {
+              cb.callback.apply(this);
+            }
+          });
         }
 
         return result;
