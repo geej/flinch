@@ -10,17 +10,30 @@ const cloneElement = (element, props) => Object.assign({}, element, { props });
 // TODO
 const PureComponent = Component;
 const isValidElement = () => true;
-const createFactory = () => {};
+const createFactory = () => { throw new Error('Not implemented'); };
+const Fragment = () => { throw new Error('Not implemented'); };
 
 const hydrate = render;
 const createPortal = () => {};
 
-export {
-  //React
+export default {
   Component,
   PureComponent,
   createContext,
-  // Fragment,
+  Fragment,
+  createElement,
+  createFactory,
+  cloneElement,
+  isValidElement,
+  Children,
+}
+
+export {
+  // React
+  Component,
+  PureComponent,
+  createContext,
+  Fragment,
   createElement,
   createFactory,
   cloneElement,
