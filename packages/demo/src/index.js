@@ -1,4 +1,5 @@
 import Flinch, { StatefulNode } from '@flinch/core';
+import '@flinch/props-defaults';
 import { render } from '@flinch/dom';
 import { Observer } from '@flinch/mobx';
 import { observable } from 'mobx';
@@ -7,6 +8,8 @@ import effect from '@flinch/effect';
 function FunctionalComponent(props) {
   return <div>Clicked: { props.counter || 0 }</div>;
 }
+
+FunctionalComponent.defaultProps = { counter: 99 };
 
 @Observer
 class StatefulComponent2 extends StatefulNode {
@@ -31,4 +34,4 @@ class StatefulComponent extends StatefulNode {
 
 
 
-render(<div height="200" width="200"><StatefulComponent></StatefulComponent></div>, document.getElementById('root'));
+render(<div height="200" width="200"><StatefulComponent></StatefulComponent><FunctionalComponent /></div>, document.getElementById('root'));
