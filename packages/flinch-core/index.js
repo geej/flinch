@@ -31,7 +31,7 @@ const Util = {
   }
 }
 
-export class Node {
+export default class Core {
   static typeRegistry = [
     { check: klass => StatefulNode.isPrototypeOf(klass), getClass: klass => klass },
     { check: component => typeof component === 'function' && !StatefulNode.isPrototypeOf(component), getClass: () => FunctionalNode },
@@ -47,9 +47,11 @@ export class Node {
   }
 
   static registerType(typeObject) {
-    Node.typeRegistry.push(typeObject);
+    Core.typeRegistry.push(typeObject);
   }
+}
 
+export class Node {
   constructor(component, props) {
     this.props = props;
     this.component = component;

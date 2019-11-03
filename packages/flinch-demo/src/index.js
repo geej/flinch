@@ -1,7 +1,7 @@
-/* @jsx Node.create */ 
+/* @jsx Flinch.create */ 
 
 import { render } from '@flinch/flinch-dom';
-import { StatefulNode, Node } from '@flinch/flinch-core';
+import Flinch, { StatefulNode } from '@flinch/flinch-core';
 
 function FunctionalComponent(props) {
   return <div>Clicked: { props.counter || 0 }</div>;

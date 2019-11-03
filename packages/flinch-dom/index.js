@@ -1,4 +1,4 @@
-import { Node } from '@flinch/flinch-core';
+import Flinch, { Node } from '@flinch/flinch-core';
 
 export const render = (element, target)  => target.parentNode.replaceChild(element.update(), target);
 
@@ -27,4 +27,4 @@ class HTMLNode extends Node {
   }
 }
 
-Node.registerType({ check: tag => typeof tag === 'string', getClass: () => HTMLNode });
+Flinch.registerType({ check: tag => typeof tag === 'string', getClass: () => HTMLNode });
