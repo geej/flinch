@@ -1,4 +1,4 @@
-const Util = {
+export const Util = {
   isPrimitive: node => node !== Object(node),
   getFlatChildren: node =>
     node.props.children.reduce(
@@ -140,5 +140,6 @@ export class StatefulNode extends Node {
   setState(newState) {
     this.state = { ...this.state, ...newState };
     this.update(this.props);
+    return this.state;
   }
 }

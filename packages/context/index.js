@@ -1,5 +1,5 @@
 import Flinch, { StatefulNode } from '@flinch/core';
-import '@flinch/defaultProps';
+import '@flinch/props-defaults';
 import effect from '@flinch/effect';
 
 let contextKey = 0;
@@ -19,7 +19,7 @@ function createProvider(value) {
     static contextKey = contextKey++;
 
     @effect('value') propagateContext() {
-      // Push the context down
+      // Push the context down, call update on all linked children
     }
 
     render() {
@@ -29,6 +29,8 @@ function createProvider(value) {
 }
 
 export function createContext(initialValue) {
-  const Provider, Consumer;
+  const Provider = null;
+  const Consumer = null;
+
   return { Provider, Consumer };
 }

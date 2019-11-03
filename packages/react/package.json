@@ -1,0 +1,14 @@
+{
+  "name": "@flinch/react",
+  "version": "0.0.1",
+  "description": "React compatibility layer for Flinch",
+  "main": "index.js",
+  "author": "geej",
+  "license": "MIT",
+  "dependencies": {
+    "@flinch/core": "0.0.1",
+    "@flinch/dom": "0.0.1",
+    "@flinch/effect": "0.0.1",
+    "@flinch/context": "0.0.1"
+  }
+}

@@ -1,4 +1,4 @@
-export default function effect(...props) {
+export default function effect(...keys) {
   return function(target, name, descriptor) {
     if (!target._lifecycleCallbacks) {
       target._lifecycleCallbacks = [];
@@ -19,7 +19,7 @@ export default function effect(...props) {
           this._mounted = true;
         } else {
           target._lifecycleCallbacks.forEach(cb => {
-            if (cb.props.filter(prop => Array.from(changedProps).includes(prop)).length) {
+            if (cb.keys.filter(prop => Array.from(changedProps).includes(prop)).length) {
               cb.callback.apply(this);
             }
           });
@@ -29,7 +29,7 @@ export default function effect(...props) {
       };
     }
 
-    target._lifecycleCallbacks.push({ props, callback: target[name] });
+    target._lifecycleCallbacks.push({ keys, callback: target[name] });
 
     return descriptor;
   };
