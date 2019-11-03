@@ -1,0 +1,23 @@
+{
+  "name": "flinch-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "geej",
+  "license": "MIT",
+  "scripts": {
+    "server": "webpack-dev-server"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/preset-env": "^7.6.3",
+    "@flinch/flinch-core": "0.0.1",
+    "@flinch/flinch-dom": "0.0.1",
+    "babel-loader": "^8.0.6",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  }
+}

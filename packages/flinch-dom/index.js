@@ -1,4 +1,4 @@
-import Node from '@flinch/flinch-core';
+import { Node } from '@flinch/flinch-core';
 
 export const render = (element, target)  => target.parentNode.replaceChild(element.update(), target);
 

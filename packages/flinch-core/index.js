@@ -31,7 +31,7 @@ const Util = {
   }
 }
 
-class Node {
+export class Node {
   static typeRegistry = [
     { check: klass => StatefulNode.isPrototypeOf(klass), getClass: klass => klass },
     { check: component => typeof component === 'function' && !StatefulNode.isPrototypeOf(component), getClass: () => FunctionalNode },
