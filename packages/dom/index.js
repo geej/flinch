@@ -1,6 +1,12 @@
 import Flinch, { Node } from '@flinch/core';
 
-export const render = (element, target)  => target.parentNode.replaceChild(element.update(), target);
+/**
+ * Attaches a Flinch tree to a target DOM element.
+ *
+ * @param {Node} node - root node of the tree
+ * @param {HTMLElement} target - element onto which to render
+ */
+export const render = (node, target)  => target.parentNode.replaceChild(node.update(), target);
 
 class HTMLNode extends Node {
   draw() {
