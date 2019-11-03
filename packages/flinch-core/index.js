@@ -5,6 +5,11 @@ const Util = {
   getNewTree: (oldTree, newTree) => {
     // NOTE: This is not remotely done
 
+    // By virtue of JSX, a component will always have the same number of ROOT LEVEL children. If it doesn't have
+    // the same number of root level children, it is not the same tree
+
+    // If the type of root node changes, we should dump the whole subtree and replace everything. (should we?)
+
     if (!oldTree) return newTree;
 
     if (
@@ -24,6 +29,7 @@ const Util = {
         child.props = newTree.props.children[index].props;
       });
 
+      // There is a props bug here. Only children is correctly moved.
       newTree.props.children = oldTree.props.children;
     }
     
