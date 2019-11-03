@@ -1,6 +1,11 @@
 const Util = {
   isPrimitive: node => node !== Object(node),
-  getFlatChildren: node => node.props.children.reduce((memo, value) => Array.isArray(value) ? [ ...memo, ...value ] : [ ...memo, value ], []),
+  getFlatChildren: node =>
+    node.props.children.reduce(
+      (memo, value) =>
+        Array.isArray(value) ? [...memo, ...value] : [...memo, value],
+      []
+    ),
   shouldRenderNode: node => node || node === 0,
   getNewTree: (oldTree, newTree) => {
     // NOTE: This is not remotely done
@@ -13,11 +18,12 @@ const Util = {
     if (!oldTree) return newTree;
 
     if (
-      oldTree.props.children.length === newTree.props.children.length && oldTree.props.children.every((value, index) => {
+      oldTree.props.children.length === newTree.props.children.length &&
+      oldTree.props.children.every((value, index) => {
         if (Util.isPrimitive(value)) {
           return Util.isPrimitive(newTree.props.children[index]);
         }
-        
+
         return value.component === newTree.props.children[index].component;
       })
     ) {
@@ -32,15 +38,23 @@ const Util = {
       // There is a props bug here. Only children is correctly moved.
       newTree.props.children = oldTree.props.children;
     }
-    
+
     return newTree.component === oldTree.component ? oldTree : newTree;
   }
-}
+};
 
 export default class Core {
   static typeRegistry = [
-    { check: klass => StatefulNode.isPrototypeOf(klass), getClass: klass => klass },
-    { check: component => typeof component === 'function' && !StatefulNode.isPrototypeOf(component), getClass: () => FunctionalNode },
+    {
+      check: klass => StatefulNode.isPrototypeOf(klass),
+      getClass: klass => klass
+    },
+    {
+      check: component =>
+        typeof component === "function" &&
+        !StatefulNode.isPrototypeOf(component),
+      getClass: () => FunctionalNode
+    }
   ];
 
   static create(tag, props, ...children) {
@@ -72,8 +86,10 @@ export class Node {
       this.tree.update();
     }
 
-    Util.getFlatChildren(this.tree).forEach(child => child.update && child.update());
-    
+    Util.getFlatChildren(this.tree).forEach(
+      child => child.update && child.update()
+    );
+
     this.props.ref && this.props.ref(this);
     return this.replaceRoot(this.draw());
   }
@@ -83,7 +99,7 @@ export class Node {
   }
 
   render() {
-    throw new Error('render must be defined by a child class!');
+    throw new Error("render must be defined by a child class!");
   }
 
   draw() {
@@ -91,15 +107,25 @@ export class Node {
   }
 
   replaceRoot(node) {
-    this.root && this.root.parentNode && this.root.parentNode.replaceChild(node, this.root);
+    this.root &&
+      this.root.parentNode &&
+      this.root.parentNode.replaceChild(node, this.root);
     this.root = node;
     return this.root;
   }
-  
+
   getResolvedChildren() {
     const fragment = document.createDocumentFragment();
-    Util.getFlatChildren(this).forEach(child => Util.shouldRenderNode(child) && fragment.appendChild(Util.isPrimitive(child) ? document.createTextNode(child) : child.replaceRoot(child.draw())));
-    
+    Util.getFlatChildren(this).forEach(
+      child =>
+        Util.shouldRenderNode(child) &&
+        fragment.appendChild(
+          Util.isPrimitive(child)
+            ? document.createTextNode(child)
+            : child.replaceRoot(child.draw())
+        )
+    );
+
     return fragment;
   }
 }
@@ -111,8 +137,8 @@ class FunctionalNode extends Node {
 }
 
 export class StatefulNode extends Node {
-  state = {}
-    
+  state = {};
+
   setState(newState) {
     this.state = { ...this.state, ...newState };
     this.update(this.props);
