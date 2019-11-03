@@ -4,9 +4,9 @@ const Util = {
   shouldRenderNode: node => node || node === 0,
   getNewTree: (oldTree, newTree) => {
     // NOTE: This is not remotely done
-  
+
     if (!oldTree) return newTree;
-    
+
     if (
       oldTree.props.children.length === newTree.props.children.length && oldTree.props.children.every((value, index) => {
         if (Util.isPrimitive(value)) {
@@ -27,7 +27,7 @@ const Util = {
       newTree.props.children = oldTree.props.children;
     }
     
-    return newTree;
+    return newTree.component === oldTree.component ? oldTree : newTree;
   }
 }
 
@@ -52,18 +52,37 @@ export default class Core {
 }
 
 export class Node {
+  _mounted = false;
+
   constructor(component, props) {
     this.props = props;
     this.component = component;
   }
 
+  componentDidMount() {}
+  componentDidUpdate() {}
+
   update() {
     const tree = this.render();
     
     this.tree = this.mutateTree(tree);
+
+    if (this !== this.tree) {
+      this.tree.update();
+    }
+
     Util.getFlatChildren(this.tree).forEach(child => child.update && child.update());
     
-    return this.replaceRoot(this.draw());
+    const dom = this.replaceRoot(this.draw());
+    if (!this._mounted) {
+      this._mounted = true;
+      this.props.ref && this.props.ref(this);
+      this.componentDidMount();
+    } else {
+      this.componentDidUpdate();
+    }
+
+    return dom;
   }
 
   mutateTree(newTree) {

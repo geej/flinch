@@ -2,19 +2,19 @@
 
 import { render } from '@flinch/flinch-dom';
 import Flinch, { StatefulNode } from '@flinch/flinch-core';
+import { Observer } from '@flinch/flinch-mobx';
+import { observable } from 'mobx';
 
 function FunctionalComponent(props) {
   return <div>Clicked: { props.counter || 0 }</div>;
 }
 
+@Observer
 class StatefulComponent2 extends StatefulNode {
-  state = {
-    clicked: 0
-  }
-
+  @observable clicked = 0;
 
   render() {
-    return <div onClick={ () => this.setState({ clicked: this.state.clicked + 1 }) }><FunctionalComponent counter={this.state.clicked} /></div>;
+    return <div onClick={ () => (this.clicked = this.clicked + 1) }><FunctionalComponent counter={this.clicked} /></div>;
   }
 }
 
