@@ -1,4 +1,4 @@
-import Flinch, { StatefulNode } from '@flinch/flinch-core';
+import Flinch, { StatefulNode } from '@flinch/core';
 import { observe } from 'mobx';
 
 /* @jsx Flinch.create */

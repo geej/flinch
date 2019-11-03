@@ -1,4 +1,4 @@
-# flinch-mobx
+# @flitch/mobx
 A simple higher-order component to trigger a state change when a MobX observable mutates.
 ## Usage
 ~~~~ 

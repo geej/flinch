@@ -1,8 +1,8 @@
 /* @jsx Flinch.create */ 
 
-import { render } from '@flinch/flinch-dom';
-import Flinch, { StatefulNode } from '@flinch/flinch-core';
-import { Observer } from '@flinch/flinch-mobx';
+import Flinch, { StatefulNode } from '@flinch/core';
+import { render } from '@flinch/dom';
+import { Observer } from '@flinch/mobx';
 import { observable } from 'mobx';
 
 function FunctionalComponent(props) {
