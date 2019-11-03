@@ -6,7 +6,8 @@ import { observable } from "mobx";
 import effect from "@flinch/effect";
 
 function FunctionalComponent(props) {
-  return <div>Clicked: {props.counter || 0}</div>;
+  return props.counter;
+  // return <div>Clicked: {props.counter || 0}</div>;
 }
 
 FunctionalComponent.defaultProps = { counter: 99 };
@@ -17,7 +18,7 @@ class StatefulComponent2 extends StatefulNode {
 
   render() {
     return (
-      <div onClick={() => (this.clicked = this.clicked + 1)}>
+      <div onClick={() => (this.clicked = this.clicked + 1)} style={ this.clicked > 0 && "background-color: red; " }>
         <FunctionalComponent counter={this.clicked} />
       </div>
     );
@@ -42,6 +43,7 @@ class StatefulComponent extends StatefulNode {
         <FunctionalComponent counter={this.state.clicked} />
         {this.state.clicked < 10 && "This will go away at 10"}
         <StatefulComponent2 />
+        {this.props.children}
       </div>
     );
   }
@@ -49,7 +51,7 @@ class StatefulComponent extends StatefulNode {
 
 render(
   <div height="200" width="200">
-    <StatefulComponent></StatefulComponent>
+    <StatefulComponent><StatefulComponent2 /></StatefulComponent>
     <FunctionalComponent />
   </div>,
   document.getElementById("root")

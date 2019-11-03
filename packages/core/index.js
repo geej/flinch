@@ -7,39 +7,49 @@ const Util = {
       []
     ),
   shouldRenderNode: node => node || node === 0,
-  getNewTree: (oldTree, newTree) => {
-    // NOTE: This is not remotely done
-
+  drawNode: node => Util.isPrimitive(node) ? document.createTextNode(node) : node.replaceRoot(node.draw()),
+  mutateTree: (node) => {
     // By virtue of JSX, a component will always have the same number of ROOT LEVEL children. If it doesn't have
     // the same number of root level children, it is not the same tree
 
-    // If the type of root node changes, we should dump the whole subtree and replace everything. (should we?)
+    const oldTree = node.tree;
+    const newTree = node.render();
 
-    if (!oldTree) return newTree;
+    if (oldTree && !Util.isPrimitive(newTree) && oldTree.component === newTree.component && oldTree.props.children.length === newTree.props.children.length) {
+      const { children, ...otherProps } = newTree.props;
 
-    if (
-      oldTree.props.children.length === newTree.props.children.length &&
-      oldTree.props.children.every((value, index) => {
-        if (Util.isPrimitive(value)) {
-          return Util.isPrimitive(newTree.props.children[index]);
+      const newChildren = children.map((child, index) => {
+        if (child.component !== oldTree.props.children[index].component || Util.isPrimitive(child)) {
+          return child;
         }
-
-        return value.component === newTree.props.children[index].component;
-      })
-    ) {
-      oldTree.props.children.forEach((child, index) => {
-        if (Util.isPrimitive(child)) {
-          oldTree.props.children[index] = newTree.props.children[index];
-          return;
+        if (Array.isArray(child)) {
+          if (!Array.isArray(oldTree.props.children[index])) {
+            return child;
+          } else {
+            // TODO: do your best guess on the arrays (using keys)
+            return child;
+          }
         }
-        child.props = newTree.props.children[index].props;
+        return Object.assign(oldTree.props.children[index], { props: child.props });
       });
 
-      // There is a props bug here. Only children is correctly moved.
-      newTree.props.children = oldTree.props.children;
+      oldTree.props = { ...otherProps, children: newChildren };
+      node.tree = oldTree;
+    } else {
+      node.tree = newTree;
     }
 
-    return newTree.component === oldTree.component ? oldTree : newTree;
+    if (Util.isPrimitive(node.tree)) {
+      return;
+    }
+    
+    if (node !== node.tree) {
+      node.tree.update();
+    }
+
+    Util.getFlatChildren(node.tree).forEach(
+      child => child.update && child.update()
+    );
   }
 };
 
@@ -80,22 +90,9 @@ export class Node {
   }
 
   update() {
-    this.tree = this.mutateTree(this.render());
-
-    if (this !== this.tree) {
-      this.tree.update();
-    }
-
-    Util.getFlatChildren(this.tree).forEach(
-      child => child.update && child.update()
-    );
-
+    Util.mutateTree(this);
     this.props.ref && this.props.ref(this);
     return this.replaceRoot(this.draw());
-  }
-
-  mutateTree(newTree) {
-    return Util.getNewTree(this.tree, newTree);
   }
 
   render() {
@@ -103,13 +100,13 @@ export class Node {
   }
 
   draw() {
-    return this.tree.draw();
+    return Util.drawNode(this.tree);
   }
 
   replaceRoot(node) {
-    this.root &&
-      this.root.parentNode &&
+    if (this.root && this.root.parentNode) {
       this.root.parentNode.replaceChild(node, this.root);
+    }
     this.root = node;
     return this.root;
   }
@@ -120,9 +117,7 @@ export class Node {
       child =>
         Util.shouldRenderNode(child) &&
         fragment.appendChild(
-          Util.isPrimitive(child)
-            ? document.createTextNode(child)
-            : child.replaceRoot(child.draw())
+          Util.drawNode(child)
         )
     );
 
