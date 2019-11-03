@@ -1,0 +1,11 @@
+{
+  "name": "@flinch/flinch-dom",
+  "version": "0.0.1",
+  "description": "HTML support for flinch",
+  "main": "index.js",
+  "author": "geej",
+  "license": "MIT",
+  "dependencies": {
+    "@flinch/flinch-core": "0.0.1"
+  }
+}
