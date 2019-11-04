@@ -19,6 +19,7 @@ export const Util = {
     if (oldTree && !Util.isPrimitive(newTree) && oldTree.component === newTree.component && oldTree.props.children.length === newTree.props.children.length) {
       const { children, ...otherProps } = newTree.props;
 
+      // TODO: Make this better
       const newChildren = children.map((child, index) => {
         if (child.component !== oldTree.props.children[index].component || Util.isPrimitive(child)) {
           return child;
@@ -27,8 +28,14 @@ export const Util = {
           if (!Array.isArray(oldTree.props.children[index])) {
             return child;
           } else {
-            // TODO: do your best guess on the arrays (using keys)
-            return child;
+            return child.map((child2, index2) => {
+              if (child2.component !== oldTree.props.children[index][index2].component || Util.isPrimitive(child2)) {
+                return child2;
+              } else {
+                oldTree.props.children[index][index2].update(child2.props);
+                return oldTree.props.children[index][index2];
+              }
+            });
           }
         }
         
@@ -47,13 +54,17 @@ export const Util = {
     }
     
     if (node !== node.tree) {
+      node.tree.parent = node;
       node.tree.update(newProps);
     }
 
     // TODO: This calls update twice on some children from the oldTree. This is bad. Fix it.
-    Util.getFlatChildren(node.tree).forEach(
-      child => child.update && child.update()
-    );
+    Util.getFlatChildren(node.tree).forEach(child => {
+      if (child.update) {
+        child.parent = node.tree;
+        child.update();
+      }
+    });
   }
 };
 

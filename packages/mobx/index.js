@@ -9,7 +9,7 @@ import { observe } from "mobx";
  *
  * @param {StatefulNode} Component - component to watch
  */
-export function Observer(Component) {
+export function observer(Component) {
   return class ObservedComponent extends StatefulNode {
     state = { mutator: 0 };
 

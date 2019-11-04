@@ -2,35 +2,45 @@ import Flinch, { StatefulNode } from '@flinch/core';
 import '@flinch/props-defaults';
 import effect from '@flinch/effect';
 
-let contextKey = 0;
-
-class Consumer extends StatefulNode {
-  // Find nearest provider
-  // get values
-
-  render() {
-    return this.props.children(values);
-  }
-}
-
-function createProvider(value) {
+export function createContext(value) {
   class Provider extends StatefulNode {
     static defaultProps = { value }
-    static contextKey = contextKey++;
+    callbacks = [];
 
-    @effect('value') propagateContext() {
-      // Push the context down, call update on all linked children
+    registerCallback(callback) {
+      this.callbacks.push(callback);
+      return this.props.value;
+    }
+
+    @effect('value') pushContext() {
+      this.callbacks.forEach(cb => cb(this.props.value));
     }
 
     render() {
-      return this.props.children;
+      return <div>{ this.props.children }</div>;
     }
   }
-}
 
-export function createContext(initialValue) {
-  const Provider = null;
-  const Consumer = null;
+  class Consumer extends StatefulNode {
+    state = { value }
+
+    handleContextChange = value => this.setState({ value });
+
+    @effect() findProvider() {
+      let node = this.parent;
+      while (node && !(node instanceof Provider)) {
+        node = node.parent;
+      }
+
+      if (node) {
+        this.setState({ value: node.registerCallback(this.handleContextChange) });
+      }
+    }
+  
+    render() {
+      return typeof this.props.children[0] === 'function' && this.props.children[0](this.state.value);
+    }
+  }
 
   return { Provider, Consumer };
 }

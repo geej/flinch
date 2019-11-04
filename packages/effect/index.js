@@ -15,8 +15,8 @@ export default function effect(...keys) {
 
         const result = update.apply(this, [ newProps ]);
         if (!this._mounted) {
-          target._lifecycleCallbacks.map(cb => cb.callback.apply(this));
           this._mounted = true;
+          target._lifecycleCallbacks.map(cb => cb.callback.apply(this));
         } else {
           target._lifecycleCallbacks.forEach(cb => {
             if (cb.keys.filter(prop => Array.from(changedProps).includes(prop)).length) {

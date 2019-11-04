@@ -1,18 +1,20 @@
 import Flinch, { StatefulNode } from "@flinch/core";
 import "@flinch/props-defaults";
 import { render } from "@flinch/dom";
-import { Observer } from "@flinch/mobx";
+import { observer } from "@flinch/mobx";
 import { observable } from "mobx";
 import effect from "@flinch/effect";
+import { createContext } from '@flinch/context';
+
+const { Provider, Consumer } = createContext(2);
 
 function FunctionalComponent(props) {
   return props.counter;
-  // return <div>Clicked: {props.counter || 0}</div>;
 }
 
 FunctionalComponent.defaultProps = { counter: 99 };
 
-@Observer
+@observer
 class StatefulComponent2 extends StatefulNode {
   @observable clicked = 0;
 
@@ -35,6 +37,7 @@ class StatefulComponent extends StatefulNode {
   render() {
     return (
       <div>
+      <Provider value={this.state.clicked}>
         <button
           onClick={() => this.setState({ clicked: this.state.clicked + 1 })}
         >
@@ -42,8 +45,13 @@ class StatefulComponent extends StatefulNode {
         </button>
         <FunctionalComponent counter={this.state.clicked} />
         {this.state.clicked < 10 && "This will go away at 10"}
-        <StatefulComponent2 counter={this.state.clicked } />
-        {this.props.children}
+        <StatefulComponent2 counter={this.state.clicked} />
+        <Consumer>
+          {
+            value => <FunctionalComponent counter={`Via Context: ${value}`} />
+          }
+        </Consumer>
+      </Provider>
       </div>
     );
   }
