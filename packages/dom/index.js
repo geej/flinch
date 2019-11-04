@@ -13,7 +13,7 @@ class HTMLNode extends Node {
   draw() {
     const tag = document.createElement(this.component);
 
-    const { children, ...otherProps } = this.props;
+    const { children, className, ...otherProps } = this.props;
     for (let key in otherProps) {
       const [, action] = /^on([a-zA-Z]+)$/.exec(key) || [];
 
@@ -24,6 +24,10 @@ class HTMLNode extends Node {
       }
     }
 
+    if (className) {
+      tag.setAttribute('class', className);
+    }
+    
     tag.appendChild(this.getResolvedChildren());
 
     return tag;

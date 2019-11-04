@@ -10,11 +10,12 @@ const cloneElement = (element, props) => Object.assign({}, element, { props });
 // TODO
 const PureComponent = Component;
 const isValidElement = () => true;
-const createFactory = () => { throw new Error('Not implemented'); };
+const createFactory = Klass => (props, children) => Flinch.create(Klass, props, children);
 const Fragment = () => { throw new Error('Not implemented'); };
 
 const hydrate = render;
 const createPortal = () => {};
+const findDOMNode = vNode => vNode.root;
 
 export default {
   Component,
@@ -26,6 +27,10 @@ export default {
   cloneElement,
   isValidElement,
   Children,
+  render,
+  hydrate,
+  createPortal,
+  findDOMNode,
 }
 
 export {
@@ -43,5 +48,6 @@ export {
   // ReactDOM
   render,
   hydrate,
-  createPortal
+  createPortal,
+  findDOMNode,
 }

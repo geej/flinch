@@ -13,7 +13,11 @@ export const Util = {
     // the same number of root level children, it is not the same tree
 
     const oldTree = node.tree;
-    const newTree = node.render();
+    let newTree = node.render();
+
+    if (Array.isArray(newTree)) {
+      newTree = newTree[0];
+    }
 
     let newProps;
     if (oldTree && !Util.isPrimitive(newTree) && oldTree.component === newTree.component && oldTree.props.children.length === newTree.props.children.length) {
@@ -21,6 +25,8 @@ export const Util = {
 
       // TODO: Make this better
       const newChildren = children.map((child, index) => {
+        if (!child && child !== 0 || child.length === 0) return;
+        
         if (child.component !== oldTree.props.children[index].component || Util.isPrimitive(child)) {
           return child;
         }
@@ -60,7 +66,7 @@ export const Util = {
 
     // TODO: This calls update twice on some children from the oldTree. This is bad. Fix it.
     Util.getFlatChildren(node.tree).forEach(child => {
-      if (child.update) {
+      if (child && child.update) {
         child.parent = node.tree;
         child.update();
       }
@@ -86,7 +92,8 @@ export default class Core {
     for (let type of this.typeRegistry) {
       if (type.check(tag)) {
         const Klass = type.getClass(tag);
-        return new Klass(tag, { ...props, children });
+        // Bug here
+        return new Klass(tag, { children, ...props });
       }
     }
   }
@@ -145,7 +152,7 @@ class FunctionalNode extends Node {
   }
 }
 
-export class StatefulNode extends Node {
+export class StatefulNode extends Node {  
   state = {};
 
   setState(newState) {

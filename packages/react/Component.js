@@ -9,17 +9,28 @@ export default class Component extends StatefulNode {
   componentWillUnmount() {}
   shouldComponentUpdate(nextProps, nextState) {}
 
+  // Legacy
+  //componentWillMount() {}
+  //UNSAFE_componentWillUpdate(nextProps, nextState) {}
+  //UNSAFE_componentWillReceiveProps(nextProps) {}
+
+  context = {};
+
+  constructor(Component, props) {
+    super(Component, props);
+  }
+
+  update(newProps) {
+    this.state = { ...this.state, ...this.constructor.getDerivedStateFromProps(this.props, this.state) };
+    super.update(newProps);
+  }
+
   @effect() handleMount() {
     this.componentDidMount();
+    this.setState(this.constructor.getDerivedStateFromProps(this.props, this.state));
     return () => this.componentWillUnmount();
   }
 
-  // Legacy
-  componentWillMount() {}
-  UNSAFE_componentWillUpdate(nextProps, nextState) {}
-  UNSAFE_componentWillReceiveProps(nextProps) {}
-
-  // setState() {}
   forceUpdate() { 
     this.update(); 
   }
@@ -35,3 +46,5 @@ export default class Component extends StatefulNode {
     callback(newState);
   }
 }
+
+Object.defineProperty(Component.prototype, 'isReactComponent', { value: true });

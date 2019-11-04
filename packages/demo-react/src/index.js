@@ -1,6 +1,11 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom';
-import RaisedButton from 'material-ui/RaisedButton';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 
 class App extends React.Component {
   render() {
@@ -8,10 +13,28 @@ class App extends React.Component {
   }
 }
 
+function ButtonAppBar(props) {
+  return (
+    <div style="flex-grow: 1;">
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton color="inherit" aria-label="Menu">
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" color="inherit" style="flex-grow: 1;">
+            News
+          </Typography>
+          <Button color="inherit">Login</Button>
+        </Toolbar>
+      </AppBar>
+    </div>
+  );
+}
+
 ReactDOM.render(
   <div height="200" width="200">
+    <ButtonAppBar />
     <App />
-    <RaisedButton label="hi" />
   </div>,
   document.getElementById("root")
 );

@@ -1,15 +1,20 @@
-import { Util } from '@flinch/core';
+const getFlatChildren = children => children.reduce(
+  (memo, value) =>
+    Array.isArray(value) ? [...memo, ...value] : [...memo, value],
+  []
+);
 
 export default {
-  forEach: (children, fn) => Util.getFlatChildren(children).forEach(child => fn(child)),
+  forEach: (children, fn) => getFlatChildren(children).forEach(child => fn(child)),
   only: children => {
-    const flat = Util.getFlatChildren(children);
+    const flat = getFlatChildren2(children);
     if (flat.length !== 1) {
       throw new Error('There is more than one child!');
     }
 
     return flat[0];
   },
-  count: children => Util.getFlatChildren(children).length,
-  toArray: children => Util.getFlatChildren(children)
+  count: children => getFlatChildren(children).length,
+  toArray: children => getFlatChildren(children),
+  map: (children, fn) => getFlatChildren(children).map(child => fn(child))
 };
