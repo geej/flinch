@@ -9,6 +9,7 @@
     "@flinch/core": "0.0.1",
     "@flinch/dom": "0.0.1",
     "@flinch/effect": "0.0.1",
-    "@flinch/context": "0.0.1"
+    "@flinch/context": "0.0.1",
+    "@flinch/portals": "0.0.1"
   }
 }

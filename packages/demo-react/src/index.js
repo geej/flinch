@@ -31,10 +31,17 @@ function ButtonAppBar(props) {
   );
 }
 
+class Portal extends React.Component {
+  render() {
+    return ReactDOM.createPortal(<div>{ this.props.children }</div>, document.getElementById('portal'));
+  }
+}
+
 ReactDOM.render(
   <div height="200" width="200">
     <ButtonAppBar />
     <App />
+    <Portal>hi</Portal>
   </div>,
   document.getElementById("root")
 );

@@ -1,21 +1,22 @@
 import { render } from '@flinch/dom';
 import { createContext } from '@flinch/context';
+import { createPortal } from '@flinch/portals';
 import Flinch from '@flinch/core';
 import Component from './Component';
 import Children from './Children';
 
 const createElement = (...args) => Flinch.create(...args);
 const cloneElement = (element, props) => Object.assign({}, element, { props });
+const createFactory = Klass => (props, children) => Flinch.create(Klass, props, children);
+
+const findDOMNode = vNode => vNode.root;
 
 // TODO
 const PureComponent = Component;
 const isValidElement = () => true;
-const createFactory = Klass => (props, children) => Flinch.create(Klass, props, children);
 const Fragment = () => { throw new Error('Not implemented'); };
 
 const hydrate = render;
-const createPortal = () => {};
-const findDOMNode = vNode => vNode.root;
 
 export default {
   Component,

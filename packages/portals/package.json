@@ -1,0 +1,11 @@
+{
+  "name": "@flinch/portals",
+  "version": "0.0.1",
+  "description": "Portals for Flinch",
+  "main": "index.js",
+  "author": "geej",
+  "license": "MIT",
+  "dependencies": {
+    "@flinch/core": "0.0.1"
+  }
+}
