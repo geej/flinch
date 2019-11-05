@@ -88,7 +88,7 @@ export class ForkNode extends Node {
 
     return newChildren.map((child, index) => {
       if (Array.isArray(child) && Array.isArray(oldChildren[index])) {
-        return this.mutateChildrenRecursively(oldChildren[index], child);
+        return this.updateChildren(oldChildren[index], child);
       } else {
         return Util.updateNode(this, oldChildren[index], child);
       }
