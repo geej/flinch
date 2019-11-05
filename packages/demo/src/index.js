@@ -54,6 +54,7 @@ class StatefulComponent extends StatefulNode {
           </Consumer>
           { this.props.children }
         </Provider>
+        aaaaaa
       </div>
     );
   }
@@ -61,7 +62,9 @@ class StatefulComponent extends StatefulNode {
 
 render(
   <div height="200" width="200">
-    <StatefulComponent><NodeAsPropComponent node={<StatefulComponent2 />} /></StatefulComponent>
+    <StatefulComponent>
+      <NodeAsPropComponent node={<StatefulComponent2 />} />
+    </StatefulComponent>
   </div>,
   document.getElementById("root")
 );

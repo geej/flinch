@@ -11,38 +11,28 @@ export const Util = {
   drawNode: node => Util.isPrimitive(node) ? document.createTextNode(node) : node.replaceRoot(node.draw()),
   mutateChildrenRecursively: function(oldChildren, newChildren) {
     return newChildren.map((child, index) => {
-      let resolvedChild = oldChildren;
-
-      if (!child && child !== 0) resolvedChild = child;
+      if (!child && child !== 0) return child;
       
       if (Array.isArray(child)) {
-        if (Array.isArray(oldChildren[index])) {
-          resolvedChild = Util.mutateChildrenRecursively(oldChildren[index], child);
+        if (!Array.isArray(oldChildren[index])) {
+          return child;
         } else {
-          resolvedChild = child;
+          return Util.mutateChildrenRecursively(oldChildren[index], child);
         }
       }
 
       if (child.component !== oldChildren[index].component || Util.isPrimitive(child)) {
-        resolvedChild = child;
+        child.update && child.update();
+        return child;
       }
 
-      if (resolvedChild.update) {
-        resolvedChild.update(child.props);
-      }
-      return resolvedChild;
+      oldChildren[index].update(child.props);
+      return oldChildren[index];
     });
   },
   mutateTree: (node) => {
-    // By virtue of JSX, a component will always have the same number of ROOT LEVEL children. If it doesn't have
-    // the same number of root level children, it is not the same tree
-
     const oldTree = node.tree;
-    let newTree = node.render();
-
-    if (Array.isArray(newTree)) {
-      newTree = newTree[0];
-    }
+    const newTree = node.render();
 
     let newProps;
     if (oldTree && !Util.isPrimitive(newTree) && oldTree.component === newTree.component && oldTree.props.children.length === newTree.props.children.length) {
@@ -155,7 +145,7 @@ export class StatefulNode extends Node {
 
   setState(newState) {
     this.state = { ...this.state, ...newState };
-    this.update(this.props, );
+    this.update(this.props);
     return this.state;
   }
 }
