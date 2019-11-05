@@ -20,7 +20,7 @@ export const Util = {
     Util.isPrimitive(node)
       ? document.createTextNode(node)
       : node.replaceRoot(node.draw()),
-  mutateChildrenRecursively: function(oldChildren, newChildren) {
+  mutateChildrenRecursively: function(oldChildren, newChildren, node) {
     // TODO this can be inverted for code reduction (start with array check, then do recursion)
 
     if (!Array.isArray(newChildren)) {
@@ -38,7 +38,7 @@ export const Util = {
         if (!Array.isArray(oldChildren[index])) {
           resolvedChild = child;
         } else {
-          resolvedChild = Util.mutateChildrenRecursively(oldChildren[index], child);
+          resolvedChild = Util.mutateChildrenRecursively(oldChildren[index], child, node);
         }
       } else if (
         child.component !== oldChildren[index].component
@@ -46,6 +46,7 @@ export const Util = {
         resolvedChild = child;
       }
 
+      resolvedChild.parent = node;
       resolvedChild.update && resolvedChild.update(child.props);
       return resolvedChild;
     });
@@ -65,35 +66,36 @@ export const Util = {
       !Util.isPrimitive(newTree) &&
       oldTree.component === newTree.component
     ) {
+      node.tree = oldTree;
+
       const { children, ...otherProps } = newTree.props;
       newProps = {
         ...otherProps,
         children: Util.mutateChildrenRecursively(
           oldTree.props.children,
-          children
+          children,
+          oldTree,
         )
       };
-      node.tree = oldTree;
     } else {
       node.tree = newTree;
-    }
 
-    if (Util.isPrimitive(node.tree)) {
-      return;
+      if (Util.isPrimitive(newTree)) {
+        return;
+      }
+
+      Util.getFlatChildren(newTree.props.children).forEach(child => {
+        if (child && child.update) {
+          child.parent = newTree;
+          child.update();
+        }
+      });
     }
 
     if (node !== node.tree) {
       node.tree.parent = node;
       node.tree.update(newProps);
     }
-
-    // TODO: This calls update twice on some children from the oldTree. This is bad. Fix it.
-    Util.getFlatChildren(node.tree.props.children).forEach(child => {
-      if (child && child.update) {
-        child.parent = node.tree;
-        child.update();
-      }
-    });
   }
 };
 
