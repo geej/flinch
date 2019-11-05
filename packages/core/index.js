@@ -24,6 +24,13 @@ export const Util = {
     // TODO this can be inverted for code reduction (start with array check, then do recursion)
 
     if (!Array.isArray(newChildren)) {
+      if(newChildren.update){
+        if (newChildren.component === oldChildren.component) {
+          oldChildren.update(newChildren.props);
+          return oldChildren;
+        }
+        newChildren.update();
+      } 
       return newChildren;
     }
 
@@ -51,52 +58,6 @@ export const Util = {
       return resolvedChild;
     });
   },
-  mutateTree: node => {
-    const oldTree = node.tree;
-    let newTree = node.render();
-
-    // Sometimes render (in React specifically) returns an array... not sure why
-    if (Array.isArray(newTree)) {
-      newTree = newTree[0];
-    }
-
-    let newProps;
-    if (
-      oldTree &&
-      !Util.isPrimitive(newTree) &&
-      oldTree.component === newTree.component
-    ) {
-      node.tree = oldTree;
-
-      const { children, ...otherProps } = newTree.props;
-      newProps = {
-        ...otherProps,
-        children: Util.mutateChildrenRecursively(
-          oldTree.props.children,
-          children,
-          oldTree,
-        )
-      };
-    } else {
-      node.tree = newTree;
-
-      if (Util.isPrimitive(newTree)) {
-        return;
-      }
-
-      Util.getFlatChildren(newTree.props.children).forEach(child => {
-        if (child && child.update) {
-          child.parent = newTree;
-          child.update();
-        }
-      });
-    }
-
-    if (node !== node.tree) {
-      node.tree.parent = node;
-      node.tree.update(newProps);
-    }
-  }
 };
 
 export default class Core {
@@ -113,7 +74,7 @@ export default class Core {
   ];
 
   static create(tag, props, ...children) {
-    //children = children.length === 1 ? children[0] : children;
+    children = children.length === 1 ? children[0] : children;
 
     for (let type of this.typeRegistry) {
       if (type.check(tag)) {
@@ -121,14 +82,14 @@ export default class Core {
         // Bug here
         const fullProps = {
           ...props,
-          // children: props && props.children || children
-          children:
-            props &&
-            props.children &&
-            props.children.length &&
-            props.children[0]
-              ? props.children
-              : children
+          children: props && props.children || children
+          // children:
+          //   props &&
+          //   props.children &&
+          //   props.children.length &&
+          //   props.children[0]
+          //     ? props.children
+          //     : children
         };
         const instance = new Klass(tag, fullProps);
 
@@ -154,7 +115,22 @@ export class Node {
 
   update(props = this.props) {
     this.props = props;
-    Util.mutateTree(this);
+
+    const newChild = this.render();
+
+    if (
+      !this.childNode ||
+      Util.isPrimitive(newChild) ||
+      this.childNode.component !== newChild.component
+    ) {
+      this.childNode = newChild;
+    }
+
+    if (this.childNode.update) {
+      this.childNode.parent = this;
+      this.childNode.update(newChild.props);
+    }
+
     this.props.ref && this.props.ref(this);
     return this.replaceRoot(this.draw());
   }
@@ -164,7 +140,7 @@ export class Node {
   }
 
   draw() {
-    return Util.drawNode(this.tree);
+    return Util.drawNode(this.childNode);
   }
 
   replaceRoot(node) {
@@ -174,17 +150,20 @@ export class Node {
     this.root = node;
     return this.root;
   }
+}
 
-  getResolvedChildren() {
-    const fragment = document.createDocumentFragment();
-    Util.getFlatChildren(this.props.children).forEach(child => {
-      if (Util.shouldRenderNode(child)) {
-        const node = Util.drawNode(child);
-        fragment.appendChild(node);
-      }
-    });
+export class ForkNode extends Node {
+  update(props = this.props) {
+    // TODO: Clean this terrible mess up
+    const children = Util.mutateChildrenRecursively(this.props.children, props.children, this);
+    this.props = { ...props, children };
 
-    return fragment;
+    this.props.ref && this.props.ref(this);
+    return this.replaceRoot(this.draw());
+  }
+
+  draw() {
+    return Util.drawNode(this.tree);
   }
 }
 

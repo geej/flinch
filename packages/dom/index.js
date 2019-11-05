@@ -1,4 +1,4 @@
-import Flinch, { Node } from "@flinch/core";
+import Flinch, { ForkNode, Util } from "@flinch/core";
 
 const HTML_TAGS = [
   "a",
@@ -220,7 +220,7 @@ const SVG_TAGS = [
 export const render = (node, target) =>
   target.parentNode.replaceChild(node.update(), target);
 
-class HTMLNode extends Node {
+class HTMLNode extends ForkNode {
   draw() {
     const tag = document.createElement(this.component);
 
@@ -247,9 +247,21 @@ class HTMLNode extends Node {
   render() {
     return this;
   }
+
+  getResolvedChildren() {
+    const fragment = document.createDocumentFragment();
+    Util.getFlatChildren(this.props.children).forEach(child => {
+      if (Util.shouldRenderNode(child)) {
+        const node = Util.drawNode(child);
+        fragment.appendChild(node);
+      }
+    });
+
+    return fragment;
+  }
 }
 
-class SVGNode extends Node {
+class SVGNode extends ForkNode {
   draw() {
     const tag = document.createElementNS(
       "http://www.w3.org/2000/svg",

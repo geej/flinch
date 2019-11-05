@@ -18,7 +18,7 @@ const PureComponent = Component;
 const isValidElement = () => true;
 class Fragment extends Component {
   render() {
-    return this.props.children[1];
+    return this.props.children;
   }
 }
 
