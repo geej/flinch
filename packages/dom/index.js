@@ -1,4 +1,4 @@
-import Flinch, { ForkNode } from "@flinch/core";
+import Flinch, { ForkNode, Util } from "@flinch/core";
 import { SVG_TAGS, HTML_TAGS } from './constants';
 
 /**
@@ -31,9 +31,22 @@ class DOMNode extends ForkNode {
       tag.setAttribute("class", className);
     }
 
-    tag.appendChild(this.getResolvedChildren());
+    tag.appendChild(this.drawChildren());
 
     return tag;
+  }
+
+  drawChildren() {
+    const fragment = document.createDocumentFragment();
+    Util.getFlatChildren(this.props.children).forEach(child => {
+      const node = Util.drawNode(child);
+
+      if (Util.shouldDrawNode(node)) {
+        fragment.appendChild(node);
+      }
+    });
+
+    return fragment;
   }
 
   render() {

@@ -15,7 +15,7 @@ export const Util = {
       []
     );
   },
-  shouldRenderNode: node => node || node === 0,
+  shouldDrawNode: node => node || node === 0,
   drawNode: node =>
     Util.isPrimitive(node)
       ? document.createTextNode(node)
@@ -132,7 +132,12 @@ export class Node {
     }
 
     this.props.ref && this.props.ref(this);
-    return this.replaceRoot(this.draw());
+
+    const element = this.draw();
+    
+    if (element) {
+      return this.replaceRoot(element);
+    }
   }
 
   render() {
@@ -140,7 +145,9 @@ export class Node {
   }
 
   draw() {
-    return Util.drawNode(this.childNode);
+    if (Util.shouldDrawNode(this.childNode)) {
+      return Util.drawNode(this.childNode);
+    }
   }
 
   replaceRoot(node) {
@@ -159,23 +166,12 @@ export class ForkNode extends Node {
     this.props = { ...props, children };
 
     this.props.ref && this.props.ref(this);
-    return this.replaceRoot(this.draw());
-  }
 
-  draw() {
-    return Util.drawNode(this.tree);
-  }
-
-  getResolvedChildren() {
-    const fragment = document.createDocumentFragment();
-    Util.getFlatChildren(this.props.children).forEach(child => {
-      if (Util.shouldRenderNode(child)) {
-        const node = Util.drawNode(child);
-        fragment.appendChild(node);
-      }
-    });
-
-    return fragment;
+    const element = this.draw();
+    
+    if (element) {
+      return this.replaceRoot(element);
+    }
   }
 }
 
