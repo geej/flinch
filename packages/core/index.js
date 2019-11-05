@@ -1,7 +1,11 @@
 export const Util = {
   isPrimitive: node => node !== Object(node),
   getFlatChildren: function(children) {
-    if (!children) return [];
+    if (!children && children !== 0) return [];
+
+    if (!Array.isArray(children)) {
+      children = [ children ];
+    }
 
     return children.reduce(
       (memo, value) =>
@@ -17,27 +21,33 @@ export const Util = {
       ? document.createTextNode(node)
       : node.replaceRoot(node.draw()),
   mutateChildrenRecursively: function(oldChildren, newChildren) {
+    // TODO this can be inverted for code reduction (start with array check, then do recursion)
+
+    if (!Array.isArray(newChildren)) {
+      return newChildren;
+    }
+
     return newChildren.map((child, index) => {
-      if (!child && child !== 0) return child;
+      if (!child && child !== 0 || Util.isPrimitive(child)) {
+        return child;
+      }
+      
+      let resolvedChild = oldChildren[index];
 
       if (Array.isArray(child)) {
         if (!Array.isArray(oldChildren[index])) {
-          return child;
+          resolvedChild = child;
         } else {
-          return Util.mutateChildrenRecursively(oldChildren[index], child);
+          resolvedChild = Util.mutateChildrenRecursively(oldChildren[index], child);
         }
-      }
-
-      if (
-        child.component !== oldChildren[index].component ||
-        Util.isPrimitive(child)
+      } else if (
+        child.component !== oldChildren[index].component
       ) {
-        child.update && child.update();
-        return child;
+        resolvedChild = child;
       }
 
-      oldChildren[index].update(child.props);
-      return oldChildren[index];
+      resolvedChild.update && resolvedChild.update(child.props);
+      return resolvedChild;
     });
   },
   mutateTree: node => {
@@ -53,8 +63,7 @@ export const Util = {
     if (
       oldTree &&
       !Util.isPrimitive(newTree) &&
-      oldTree.component === newTree.component &&
-      oldTree.props.children.length === newTree.props.children.length
+      oldTree.component === newTree.component
     ) {
       const { children, ...otherProps } = newTree.props;
       newProps = {
@@ -96,19 +105,21 @@ export default class Core {
     },
     {
       check: component =>
-        typeof component === "function" &&
-        !StatefulNode.isPrototypeOf(component),
+        typeof component === "function" && Object.getPrototypeOf(component) === Object.getPrototypeOf(function() {}),
       getClass: () => FunctionalNode
     }
   ];
 
   static create(tag, props, ...children) {
+    //children = children.length === 1 ? children[0] : children;
+
     for (let type of this.typeRegistry) {
       if (type.check(tag)) {
         const Klass = type.getClass(tag);
         // Bug here
-        return new Klass(tag, {
+        const fullProps = {
           ...props,
+          // children: props && props.children || children
           children:
             props &&
             props.children &&
@@ -116,7 +127,14 @@ export default class Core {
             props.children[0]
               ? props.children
               : children
-        });
+        };
+        const instance = new Klass(tag, fullProps);
+
+        // React is dumb. Extract this to middleware and put in react
+        instance.props = fullProps;
+        instance.component = tag;
+
+        return instance;
       }
     }
   }

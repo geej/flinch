@@ -20,14 +20,10 @@ export default class Component extends StatefulNode {
 
   context = {};
 
-  constructor(Component, props) {
-    super(Component, props);
-  }
-
   update(newProps) {
     this.state = {
       ...this.state,
-      ...this.constructor.getDerivedStateFromProps(this.props, this.state)
+      ...this.constructor.getDerivedStateFromProps(newProps || {}, this.state)
     };
     super.update(newProps);
   }

@@ -17,7 +17,7 @@ export function createContext(value) {
     }
 
     render() {
-      return <div>{this.props.children}</div>;
+      return Flinch.create('div', undefined, this.props.children);
     }
   }
 

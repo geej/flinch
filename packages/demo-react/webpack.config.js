@@ -42,5 +42,4 @@ module.exports = {
     hot: false,
     inline: false
   },
-  devtool: "inline-source-map"
 };
