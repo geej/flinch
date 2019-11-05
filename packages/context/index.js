@@ -41,8 +41,8 @@ export function createContext(value) {
 
     render() {
       return (
-        typeof this.props.children[0] === "function" &&
-        this.props.children[0](this.state.value)
+        typeof this.props.children === "function" &&
+        this.props.children(this.state.value)
       );
     }
   }
