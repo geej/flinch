@@ -1,18 +1,25 @@
 export const Util = {
   isPrimitive: node => node !== Object(node),
   getFlatChildren: function(children) {
+    if (!children) return [];
+
     return children.reduce(
       (memo, value) =>
-        Array.isArray(value) ? [...memo, ...Util.getFlatChildren(value)] : [...memo, value],
+        Array.isArray(value)
+          ? [...memo, ...Util.getFlatChildren(value)]
+          : [...memo, value],
       []
-    )
+    );
   },
   shouldRenderNode: node => node || node === 0,
-  drawNode: node => Util.isPrimitive(node) ? document.createTextNode(node) : node.replaceRoot(node.draw()),
+  drawNode: node =>
+    Util.isPrimitive(node)
+      ? document.createTextNode(node)
+      : node.replaceRoot(node.draw()),
   mutateChildrenRecursively: function(oldChildren, newChildren) {
     return newChildren.map((child, index) => {
       if (!child && child !== 0) return child;
-      
+
       if (Array.isArray(child)) {
         if (!Array.isArray(oldChildren[index])) {
           return child;
@@ -21,7 +28,10 @@ export const Util = {
         }
       }
 
-      if (child.component !== oldChildren[index].component || Util.isPrimitive(child)) {
+      if (
+        child.component !== oldChildren[index].component ||
+        Util.isPrimitive(child)
+      ) {
         child.update && child.update();
         return child;
       }
@@ -30,7 +40,7 @@ export const Util = {
       return oldChildren[index];
     });
   },
-  mutateTree: (node) => {
+  mutateTree: node => {
     const oldTree = node.tree;
     let newTree = node.render();
 
@@ -40,18 +50,29 @@ export const Util = {
     }
 
     let newProps;
-    if (oldTree && !Util.isPrimitive(newTree) && oldTree.component === newTree.component && oldTree.props.children.length === newTree.props.children.length) {
+    if (
+      oldTree &&
+      !Util.isPrimitive(newTree) &&
+      oldTree.component === newTree.component &&
+      oldTree.props.children.length === newTree.props.children.length
+    ) {
       const { children, ...otherProps } = newTree.props;
-      newProps = { ...otherProps, children: Util.mutateChildrenRecursively(oldTree.props.children, children) };
+      newProps = {
+        ...otherProps,
+        children: Util.mutateChildrenRecursively(
+          oldTree.props.children,
+          children
+        )
+      };
       node.tree = oldTree;
     } else {
-      node.tree = newTree;    
+      node.tree = newTree;
     }
 
     if (Util.isPrimitive(node.tree)) {
       return;
     }
-    
+
     if (node !== node.tree) {
       node.tree.parent = node;
       node.tree.update(newProps);
@@ -86,7 +107,16 @@ export default class Core {
       if (type.check(tag)) {
         const Klass = type.getClass(tag);
         // Bug here
-        return new Klass(tag, { children, ...props });
+        return new Klass(tag, {
+          ...props,
+          children:
+            props &&
+            props.children &&
+            props.children.length &&
+            props.children[0]
+              ? props.children
+              : children
+        });
       }
     }
   }
@@ -127,13 +157,12 @@ export class Node {
 
   getResolvedChildren() {
     const fragment = document.createDocumentFragment();
-    Util.getFlatChildren(this.props.children).forEach(
-      child =>
-        Util.shouldRenderNode(child) &&
-        fragment.appendChild(
-          Util.drawNode(child)
-        )
-    );
+    Util.getFlatChildren(this.props.children).forEach(child => {
+      if (Util.shouldRenderNode(child)) {
+        const node = Util.drawNode(child);
+        fragment.appendChild(node);
+      }
+    });
 
     return fragment;
   }
@@ -145,7 +174,7 @@ class FunctionalNode extends Node {
   }
 }
 
-export class StatefulNode extends Node {  
+export class StatefulNode extends Node {
   state = {};
 
   setState(newState) {

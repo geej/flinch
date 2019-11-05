@@ -10,8 +10,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'react': '@flinch/react',
-      'react-dom': '@flinch/react',
+      react: "@flinch/react",
+      "react-dom": "@flinch/react"
     }
   },
   module: {
@@ -40,7 +40,7 @@ module.exports = {
     contentBase: path.join(__dirname, "dist"),
     port: 9000,
     hot: false,
-    inline: false,
+    inline: false
   },
   devtool: "inline-source-map"
 };

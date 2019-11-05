@@ -1,20 +1,26 @@
-import { render } from '@flinch/dom';
-import { createContext } from '@flinch/context';
-import { createPortal } from '@flinch/portals';
-import Flinch from '@flinch/core';
-import Component from './Component';
-import Children from './Children';
+import { render } from "@flinch/dom";
+import { createContext } from "@flinch/context";
+import { createPortal } from "@flinch/portals";
+import Flinch from "@flinch/core";
+import "@flinch/props-defaults";
+import Component from "./Component";
+import Children from "./Children";
 
 const createElement = (...args) => Flinch.create(...args);
 const cloneElement = (element, props) => Object.assign({}, element, { props });
-const createFactory = Klass => (props, children) => Flinch.create(Klass, props, children);
+const createFactory = Klass => (props, children) =>
+  Flinch.create(Klass, props, ...(children || []));
 
 const findDOMNode = vNode => vNode.root;
 
 // TODO
 const PureComponent = Component;
 const isValidElement = () => true;
-const Fragment = () => { throw new Error('Not implemented'); };
+class Fragment extends Component {
+  render() {
+    return this.props.children[1];
+  }
+}
 
 const hydrate = render;
 
@@ -31,8 +37,8 @@ export default {
   render,
   hydrate,
   createPortal,
-  findDOMNode,
-}
+  findDOMNode
+};
 
 export {
   // React
@@ -45,10 +51,9 @@ export {
   cloneElement,
   isValidElement,
   Children,
-
   // ReactDOM
   render,
   hydrate,
   createPortal,
-  findDOMNode,
-}
+  findDOMNode
+};

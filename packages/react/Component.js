@@ -1,11 +1,15 @@
-import Flinch, { StatefulNode } from '@flinch/core';
-import effect from '@flinch/effect';
+import Flinch, { StatefulNode } from "@flinch/core";
+import effect from "@flinch/effect";
 
 export default class Component extends StatefulNode {
-  static getDerivedStateFromProps(props, state) { return state; }
+  static getDerivedStateFromProps(props, state) {
+    return state;
+  }
   componentDidMount() {}
   componentDidUpdate(prevProps, prevState, snapshot) {}
-  getSnapshotBeforeUpdate(prevProps, prevState) { return null; }
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    return null;
+  }
   componentWillUnmount() {}
   shouldComponentUpdate(nextProps, nextState) {}
 
@@ -21,23 +25,28 @@ export default class Component extends StatefulNode {
   }
 
   update(newProps) {
-    this.state = { ...this.state, ...this.constructor.getDerivedStateFromProps(this.props, this.state) };
+    this.state = {
+      ...this.state,
+      ...this.constructor.getDerivedStateFromProps(this.props, this.state)
+    };
     super.update(newProps);
   }
 
   @effect() handleMount() {
     this.componentDidMount();
-    this.setState(this.constructor.getDerivedStateFromProps(this.props, this.state));
+    this.setState(
+      this.constructor.getDerivedStateFromProps(this.props, this.state)
+    );
     return () => this.componentWillUnmount();
   }
 
-  forceUpdate() { 
-    this.update(); 
+  forceUpdate() {
+    this.update();
   }
 
   setState(state, callback = () => {}) {
     let newState;
-    if (typeof state === 'function') {
+    if (typeof state === "function") {
       newState = super.setState(state(this.state));
     } else {
       newState = super.setState(state);
@@ -47,4 +56,4 @@ export default class Component extends StatefulNode {
   }
 }
 
-Object.defineProperty(Component.prototype, 'isReactComponent', { value: true });
+Object.defineProperty(Component.prototype, "isReactComponent", { value: true });
