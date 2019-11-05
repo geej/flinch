@@ -32,7 +32,12 @@ export const Util = {
   },
   mutateTree: (node) => {
     const oldTree = node.tree;
-    const newTree = node.render();
+    let newTree = node.render();
+
+    // Sometimes render (in React specifically) returns an array... not sure why
+    if (Array.isArray(newTree)) {
+      newTree = newTree[0];
+    }
 
     let newProps;
     if (oldTree && !Util.isPrimitive(newTree) && oldTree.component === newTree.component && oldTree.props.children.length === newTree.props.children.length) {
