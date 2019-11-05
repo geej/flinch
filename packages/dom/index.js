@@ -247,18 +247,6 @@ class HTMLNode extends ForkNode {
   render() {
     return this;
   }
-
-  getResolvedChildren() {
-    const fragment = document.createDocumentFragment();
-    Util.getFlatChildren(this.props.children).forEach(child => {
-      if (Util.shouldRenderNode(child)) {
-        const node = Util.drawNode(child);
-        fragment.appendChild(node);
-      }
-    });
-
-    return fragment;
-  }
 }
 
 class SVGNode extends ForkNode {

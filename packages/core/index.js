@@ -126,7 +126,7 @@ export class Node {
       this.childNode = newChild;
     }
 
-    if (this.childNode.update) {
+    if (this.childNode && this.childNode.update) {
       this.childNode.parent = this;
       this.childNode.update(newChild.props);
     }
@@ -164,6 +164,18 @@ export class ForkNode extends Node {
 
   draw() {
     return Util.drawNode(this.tree);
+  }
+
+  getResolvedChildren() {
+    const fragment = document.createDocumentFragment();
+    Util.getFlatChildren(this.props.children).forEach(child => {
+      if (Util.shouldRenderNode(child)) {
+        const node = Util.drawNode(child);
+        fragment.appendChild(node);
+      }
+    });
+
+    return fragment;
   }
 }
 
