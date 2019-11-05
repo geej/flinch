@@ -21,43 +21,36 @@ export const Util = {
       ? document.createTextNode(node)
       : node.replaceRoot(node.draw()),
   mutateChildrenRecursively: function(oldChildren, newChildren, node) {
-    // TODO this can be inverted for code reduction (start with array check, then do recursion)
-
     if (!Array.isArray(newChildren)) {
-      if(newChildren.update){
-        if (newChildren.component === oldChildren.component) {
-          oldChildren.update(newChildren.props);
-          return oldChildren;
-        }
-        newChildren.update();
-      } 
-      return newChildren;
+      return Util.updateNode(node, oldChildren, newChildren);
     }
 
     return newChildren.map((child, index) => {
-      if (!child && child !== 0 || Util.isPrimitive(child)) {
-        return child;
+      if (Array.isArray(child) && Array.isArray(oldChildren[index])) {
+        return Util.mutateChildrenRecursively(oldChildren[index], child, node);
+      } else {
+        return Util.updateNode(node, oldChildren[index], child);
       }
-      
-      let resolvedChild = oldChildren[index];
-
-      if (Array.isArray(child)) {
-        if (!Array.isArray(oldChildren[index])) {
-          resolvedChild = child;
-        } else {
-          resolvedChild = Util.mutateChildrenRecursively(oldChildren[index], child, node);
-        }
-      } else if (
-        child.component !== oldChildren[index].component
-      ) {
-        resolvedChild = child;
-      }
-
-      resolvedChild.parent = node;
-      resolvedChild.update && resolvedChild.update(child.props);
-      return resolvedChild;
     });
   },
+  updateNode: (context, oldNode, newNode) => {
+    let node = oldNode;
+
+    if (
+      !oldNode ||
+      Util.isPrimitive(newNode) ||
+      oldNode.component !== newNode.component
+    ) {
+      node = newNode;
+    }
+
+    if (node && node.update) {
+      node.parent = context;
+      node.update(newNode.props);
+    }
+
+    return node;
+  }
 };
 
 export default class Core {
@@ -83,13 +76,6 @@ export default class Core {
         const fullProps = {
           ...props,
           children: props && props.children || children
-          // children:
-          //   props &&
-          //   props.children &&
-          //   props.children.length &&
-          //   props.children[0]
-          //     ? props.children
-          //     : children
         };
         const instance = new Klass(tag, fullProps);
 
@@ -116,20 +102,7 @@ export class Node {
   update(props = this.props) {
     this.props = props;
 
-    const newChild = this.render();
-
-    if (
-      !this.childNode ||
-      Util.isPrimitive(newChild) ||
-      this.childNode.component !== newChild.component
-    ) {
-      this.childNode = newChild;
-    }
-
-    if (this.childNode && this.childNode.update) {
-      this.childNode.parent = this;
-      this.childNode.update(newChild.props);
-    }
+    this.childNode = Util.updateNode(this, this.childNode, this.render());
 
     this.props.ref && this.props.ref(this);
 
