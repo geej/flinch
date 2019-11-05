@@ -81,15 +81,25 @@ export class Node {
 }
 
 export class ForkNode extends Node {
-  update(props = this.props) {
-    // TODO: Clean this terrible mess up
-    const children = Util.mutateChildrenRecursively(this.props.children, props.children, this);
-    this.props = { ...props, children };
+  updateChildren(oldChildren, newChildren) {
+    if (!Array.isArray(newChildren)) {
+      return Util.updateNode(this, oldChildren, newChildren);
+    }
 
+    return newChildren.map((child, index) => {
+      if (Array.isArray(child) && Array.isArray(oldChildren[index])) {
+        return this.mutateChildrenRecursively(oldChildren[index], child);
+      } else {
+        return Util.updateNode(this, oldChildren[index], child);
+      }
+    });
+  }
+
+  update(props = this.props) {
+    this.props = { ...props, children: this.updateChildren(this.props.children, props.children) };
     this.props.ref && this.props.ref(this);
 
     const element = this.draw();
-    
     if (element) {
       return this.replaceRoot(element);
     }

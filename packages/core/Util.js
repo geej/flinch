@@ -20,19 +20,6 @@ const Util = {
     Util.isPrimitive(node)
       ? document.createTextNode(node)
       : node.replaceRoot(node.draw()),
-  mutateChildrenRecursively: function(oldChildren, newChildren, node) {
-    if (!Array.isArray(newChildren)) {
-      return Util.updateNode(node, oldChildren, newChildren);
-    }
-
-    return newChildren.map((child, index) => {
-      if (Array.isArray(child) && Array.isArray(oldChildren[index])) {
-        return Util.mutateChildrenRecursively(oldChildren[index], child, node);
-      } else {
-        return Util.updateNode(node, oldChildren[index], child);
-      }
-    });
-  },
   updateNode: (context, oldNode, newNode) => {
     let node = oldNode;
 
