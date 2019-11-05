@@ -15,8 +15,8 @@ export default function effect(...keys) {
                   memo.add(key);
                 }
                 return memo;
-              }, new Set())) ||
-          [];
+              }, new Set([ '$all' ]))) ||
+          ['$all'];
 
         const result = update.apply(this, [newProps]);
         if (!this._mounted) {

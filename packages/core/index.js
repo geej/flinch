@@ -1,92 +1,5 @@
-export const Util = {
-  isPrimitive: node => node !== Object(node),
-  getFlatChildren: function(children) {
-    if (!children) return [];
-
-    return children.reduce(
-      (memo, value) =>
-        Array.isArray(value)
-          ? [...memo, ...Util.getFlatChildren(value)]
-          : [...memo, value],
-      []
-    );
-  },
-  shouldRenderNode: node => node || node === 0,
-  drawNode: node =>
-    Util.isPrimitive(node)
-      ? document.createTextNode(node)
-      : node.replaceRoot(node.draw()),
-  mutateChildrenRecursively: function(oldChildren, newChildren) {
-    return newChildren.map((child, index) => {
-      if (!child && child !== 0) return child;
-
-      if (Array.isArray(child)) {
-        if (!Array.isArray(oldChildren[index])) {
-          return child;
-        } else {
-          return Util.mutateChildrenRecursively(oldChildren[index], child);
-        }
-      }
-
-      if (
-        child.component !== oldChildren[index].component ||
-        Util.isPrimitive(child)
-      ) {
-        child.update && child.update();
-        return child;
-      }
-
-      oldChildren[index].update(child.props);
-      return oldChildren[index];
-    });
-  },
-  mutateTree: node => {
-    const oldTree = node.tree;
-    let newTree = node.render();
-
-    // Sometimes render (in React specifically) returns an array... not sure why
-    if (Array.isArray(newTree)) {
-      newTree = newTree[0];
-    }
-
-    let newProps;
-    if (
-      oldTree &&
-      !Util.isPrimitive(newTree) &&
-      oldTree.component === newTree.component &&
-      oldTree.props.children.length === newTree.props.children.length
-    ) {
-      const { children, ...otherProps } = newTree.props;
-      newProps = {
-        ...otherProps,
-        children: Util.mutateChildrenRecursively(
-          oldTree.props.children,
-          children
-        )
-      };
-      node.tree = oldTree;
-    } else {
-      node.tree = newTree;
-    }
-
-    if (Util.isPrimitive(node.tree)) {
-      return;
-    }
-
-    if (node !== node.tree) {
-      node.tree.parent = node;
-      node.tree.update(newProps);
-    }
-
-    // TODO: This calls update twice on some children from the oldTree. This is bad. Fix it.
-    Util.getFlatChildren(node.tree.props.children).forEach(child => {
-      if (child && child.update) {
-        child.parent = node.tree;
-        child.update();
-      }
-    });
-  }
-};
+import Util from './Util';
+export { Util };
 
 export default class Core {
   static typeRegistry = [
@@ -96,27 +9,29 @@ export default class Core {
     },
     {
       check: component =>
-        typeof component === "function" &&
-        !StatefulNode.isPrototypeOf(component),
+        typeof component === "function" && Object.getPrototypeOf(component) === Object.getPrototypeOf(function() {}),
       getClass: () => FunctionalNode
     }
   ];
 
   static create(tag, props, ...children) {
+    children = children.length === 1 ? children[0] : children;
+
     for (let type of this.typeRegistry) {
       if (type.check(tag)) {
         const Klass = type.getClass(tag);
         // Bug here
-        return new Klass(tag, {
+        const fullProps = {
           ...props,
-          children:
-            props &&
-            props.children &&
-            props.children.length &&
-            props.children[0]
-              ? props.children
-              : children
-        });
+          children: props && props.children || children
+        };
+        const instance = new Klass(tag, fullProps);
+
+        // React is dumb. Extract this to middleware and put in react
+        instance.props = fullProps;
+        instance.component = tag;
+
+        return instance;
       }
     }
   }
@@ -134,9 +49,16 @@ export class Node {
 
   update(props = this.props) {
     this.props = props;
-    Util.mutateTree(this);
+
+    this.childNode = Util.updateNode(this, this.childNode, this.render());
+
     this.props.ref && this.props.ref(this);
-    return this.replaceRoot(this.draw());
+
+    const element = this.draw();
+    
+    if (element) {
+      return this.replaceRoot(element);
+    }
   }
 
   render() {
@@ -144,7 +66,9 @@ export class Node {
   }
 
   draw() {
-    return Util.drawNode(this.tree);
+    if (Util.shouldDrawNode(this.childNode)) {
+      return Util.drawNode(this.childNode);
+    }
   }
 
   replaceRoot(node) {
@@ -154,17 +78,21 @@ export class Node {
     this.root = node;
     return this.root;
   }
+}
 
-  getResolvedChildren() {
-    const fragment = document.createDocumentFragment();
-    Util.getFlatChildren(this.props.children).forEach(child => {
-      if (Util.shouldRenderNode(child)) {
-        const node = Util.drawNode(child);
-        fragment.appendChild(node);
-      }
-    });
+export class ForkNode extends Node {
+  update(props = this.props) {
+    // TODO: Clean this terrible mess up
+    const children = Util.mutateChildrenRecursively(this.props.children, props.children, this);
+    this.props = { ...props, children };
 
-    return fragment;
+    this.props.ref && this.props.ref(this);
+
+    const element = this.draw();
+    
+    if (element) {
+      return this.replaceRoot(element);
+    }
   }
 }
 

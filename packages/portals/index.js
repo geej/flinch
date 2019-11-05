@@ -6,11 +6,12 @@ class PortalNode extends StatefulNode {
   // }
 
   render() {
-    return this.props.children[0];
+    return this.props.children;
   }
 
   replaceRoot(node) {
     if (!this.props.destination) {
+      console.log('NO DESTINATION');
       return;
     }
 

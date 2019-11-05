@@ -7,7 +7,7 @@ import Component from "./Component";
 import Children from "./Children";
 
 const createElement = (...args) => Flinch.create(...args);
-const cloneElement = (element, props) => Object.assign({}, element, { props });
+const cloneElement = (element, props) => Object.assign(Object.create(Object.getPrototypeOf(element)), element, { props });
 const createFactory = Klass => (props, children) =>
   Flinch.create(Klass, props, ...(children || []));
 
@@ -18,7 +18,7 @@ const PureComponent = Component;
 const isValidElement = () => true;
 class Fragment extends Component {
   render() {
-    return this.props.children[1];
+    return this.props.children;
   }
 }
 
