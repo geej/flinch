@@ -1,17 +1,16 @@
 import Flinch, { StatefulNode } from "@flinch/core";
 
 class PortalNode extends StatefulNode {
-  // update() {
-  //   this.props.children[0].update();
-  // }
-
   render() {
     return this.props.children;
   }
 
+  draw() {
+    return this.replaceRoot(this.props.children.draw());
+  }
+
   replaceRoot(node) {
     if (!this.props.destination) {
-      console.log('NO DESTINATION');
       return;
     }
 
@@ -22,9 +21,7 @@ class PortalNode extends StatefulNode {
   }
 }
 
-export function createPortal(child, container) {
-  const node = Flinch.create(PortalNode, { destination: container }, child);
-  node.update();
-
-  return undefined;
+export function createPortal(child, destination) {
+  const node = Flinch.create(PortalNode, { destination }, child);
+  node.forceUpdate();
 }

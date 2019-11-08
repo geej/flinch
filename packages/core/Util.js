@@ -17,9 +17,9 @@ const Util = {
   },
   shouldDrawNode: node => node || node === 0,
   drawNode: node =>
-    Util.isPrimitive(node)
+    (Util.isPrimitive(node) || !node)
       ? document.createTextNode(node)
-      : node.replaceRoot(node.draw()),
+      : node.draw(),
   updateNode: (context, oldNode, newNode) => {
     let node = oldNode;
 

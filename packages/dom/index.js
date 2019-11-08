@@ -8,7 +8,7 @@ import { SVG_TAGS, HTML_TAGS } from './constants';
  * @param {HTMLElement} target - element onto which to render
  */
 export const render = (node, target) =>
-  target.parentNode.replaceChild(node.update(), target);
+  target.parentNode.replaceChild(node.forceUpdate(), target);
 
 class DOMNode extends ForkNode {
   getTag() { throw new Error('getTag must be extended'); }
@@ -33,6 +33,7 @@ class DOMNode extends ForkNode {
 
     tag.appendChild(this.drawChildren());
 
+    this.replaceRoot(tag);
     return tag;
   }
 

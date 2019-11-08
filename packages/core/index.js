@@ -25,7 +25,7 @@ export default class Core {
           ...props,
           children: props && props.children || children
         };
-        const instance = new Klass(tag, fullProps);
+        const instance = new Klass(fullProps, {});
 
         // React is dumb. Extract this to middleware and put in react
         instance.props = fullProps;
@@ -42,23 +42,15 @@ export default class Core {
 }
 
 export class Node {
-  constructor(component, props) {
-    this.props = props;
-    this.component = component;
-  }
-
   update(props = this.props) {
     this.props = props;
-
     this.childNode = Util.updateNode(this, this.childNode, this.render());
-
     this.props.ref && this.props.ref(this);
+  }
 
-    const element = this.draw();
-    
-    if (element) {
-      return this.replaceRoot(element);
-    }
+  forceUpdate() {
+    this.update();
+    return this.draw();
   }
 
   render() {
@@ -98,11 +90,6 @@ export class ForkNode extends Node {
   update(props = this.props) {
     this.props = { ...props, children: this.updateChildren(this.props.children, props.children) };
     this.props.ref && this.props.ref(this);
-
-    const element = this.draw();
-    if (element) {
-      return this.replaceRoot(element);
-    }
   }
 }
 
@@ -117,7 +104,7 @@ export class StatefulNode extends Node {
 
   setState(newState) {
     this.state = { ...this.state, ...newState };
-    this.update(this.props);
+    this.forceUpdate();
     return this.state;
   }
 }

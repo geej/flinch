@@ -5,7 +5,7 @@ export default function effect(...keys) {
 
       const update = target.update;
 
-      target.update = function(newProps) {
+      target.update = function (newProps) {
         const changedProps =
           (newProps &&
             Object.keys(this.props)
@@ -15,14 +15,11 @@ export default function effect(...keys) {
                   memo.add(key);
                 }
                 return memo;
-              }, new Set([ '$all' ]))) ||
+              }, new Set(['$all']))) ||
           ['$all'];
 
         const result = update.apply(this, [newProps]);
-        if (!this._mounted) {
-          this._mounted = true;
-          target._lifecycleCallbacks.map(cb => cb.callback.apply(this));
-        } else {
+        if (this._mounted) {
           target._lifecycleCallbacks.forEach(cb => {
             if (
               cb.keys.filter(prop => Array.from(changedProps).includes(prop))
@@ -35,6 +32,17 @@ export default function effect(...keys) {
 
         return result;
       };
+
+      const draw = target.draw;
+
+      target.draw = function() {
+        const result = draw.apply(this);
+        if (!this._mounted) {
+          this._mounted = true;
+          target._lifecycleCallbacks.map(cb => cb.callback.apply(this));
+        }
+        return result;
+      }
     }
 
     target._lifecycleCallbacks.push({ keys, callback: target[name] });

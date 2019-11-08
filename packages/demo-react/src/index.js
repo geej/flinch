@@ -42,6 +42,26 @@ ReactDOM.render(
     <ButtonAppBar />
     <TemporaryDrawer />
     <App />
+    {/*<React.Fragment>*/}
+      {/*hello there*/}
+      {/*<div>*/}
+        {/*how*/}
+      {/*</div>*/}
+      {/*<div>*/}
+        {/*are*/}
+      {/*</div>*/}
+      {/*<div>*/}
+        {/*you*/}
+      {/*</div>*/}
+      {/*?*/}
+    {/*</React.Fragment>*/}
+    <div>
+      <div>
+        <div>
+          simple nested div
+        </div>
+      </div>
+    </div>
     <Portal>hi</Portal>
   </div>,
   document.getElementById("root")

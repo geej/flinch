@@ -18,6 +18,10 @@ export default class Component extends StatefulNode {
   //UNSAFE_componentWillUpdate(nextProps, nextState) {}
   //UNSAFE_componentWillReceiveProps(nextProps) {}
 
+  get type() {
+    return this.component;
+  }
+
   context = {};
 
   update(newProps) {
@@ -40,8 +44,9 @@ export default class Component extends StatefulNode {
     return () => this.componentWillUnmount();
   }
 
-  forceUpdate() {
-    this.update();
+  forceUpdate(callback) {
+    super.forceUpdate();
+    callback && callback();
   }
 
   setState(state, callback = () => {}) {
