@@ -24,7 +24,7 @@ const PureComponent = Component;
 const isValidElement = element => element instanceof Node;
 class Fragment extends Component {
   render() {
-    return this.props.children;
+    return this.props.children[0];
   }
 }
 

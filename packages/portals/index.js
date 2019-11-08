@@ -6,22 +6,14 @@ class PortalNode extends StatefulNode {
   }
 
   draw() {
-    return this.replaceRoot(this.props.children.draw());
-  }
-
-  replaceRoot(node) {
-    if (!this.props.destination) {
-      return;
-    }
-
-    this.props.destination.innerHTML = "";
+    const node = this.props.children.draw();
     this.props.destination.appendChild(node);
-    this.root = node;
-    return this.root;
+    return node;
   }
 }
 
 export function createPortal(child, destination) {
   const node = Flinch.create(PortalNode, { destination }, child);
-  node.forceUpdate();
+  child.forceUpdate();
+  return node;
 }

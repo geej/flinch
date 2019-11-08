@@ -33,7 +33,7 @@ class DOMNode extends ForkNode {
 
     tag.appendChild(this.drawChildren());
 
-    this.replaceRoot(tag);
+    this.root = tag;
     return tag;
   }
 

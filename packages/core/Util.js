@@ -37,6 +37,16 @@ const Util = {
     }
 
     return node;
+  },
+  cleanProps: props => {
+    if (!props) return;
+
+    return Object.keys(props).reduce((memo, key) => {
+      if (props[key] !== undefined) {
+        memo[key] = props[key];
+      }
+      return memo;
+    }, {});
   }
 };
 

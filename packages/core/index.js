@@ -22,8 +22,10 @@ export default class Core {
         const Klass = type.getClass(tag);
         // Bug here
         const fullProps = {
-          ...props,
-          children: props && props.children || children
+          ...Util.cleanProps(props),
+          // TODO: This is some bullshit but sometimes children can be an empty array, and we want to treat it as if that's nothing
+          children: props && props.children && !(Array.isArray(props.children) && props.children.length === 0) && props.children || children
+          //children: props && props.children || children
         };
         const instance = new Klass(fullProps, {});
 
@@ -43,9 +45,11 @@ export default class Core {
 
 export class Node {
   update(props = this.props) {
-    this.props = props;
+    const { ref, ...otherProps } = props;
+    ref && ref(this);
+
+    this.props = otherProps;
     this.childNode = Util.updateNode(this, this.childNode, this.render());
-    this.props.ref && this.props.ref(this);
   }
 
   forceUpdate() {
@@ -61,14 +65,6 @@ export class Node {
     if (Util.shouldDrawNode(this.childNode)) {
       return Util.drawNode(this.childNode);
     }
-  }
-
-  replaceRoot(node) {
-    if (this.root && this.root.parentNode) {
-      this.root.parentNode.replaceChild(node, this.root);
-    }
-    this.root = node;
-    return this.root;
   }
 }
 
@@ -88,8 +84,9 @@ export class ForkNode extends Node {
   }
 
   update(props = this.props) {
-    this.props = { ...props, children: this.updateChildren(this.props.children, props.children) };
-    this.props.ref && this.props.ref(this);
+    const { ref, ...otherProps } = props;
+    ref && ref(this);
+    this.props = { ...otherProps, children: this.updateChildren(this.props.children, props.children) };
   }
 }
 
