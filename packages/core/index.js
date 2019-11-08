@@ -46,7 +46,7 @@ export default class Core {
 export class Node {
   update(props = this.props) {
     const { ref, ...otherProps } = props;
-    ref && ref(this);
+    ref && ref(this.root || this);
 
     this.props = otherProps;
     this.childNode = Util.updateNode(this, this.childNode, this.render());
@@ -85,7 +85,7 @@ export class ForkNode extends Node {
 
   update(props = this.props) {
     const { ref, ...otherProps } = props;
-    ref && ref(this);
+    this._ref = ref;
     this.props = { ...otherProps, children: this.updateChildren(this.props.children, props.children) };
   }
 }

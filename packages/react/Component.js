@@ -38,15 +38,13 @@ export default class Component extends StatefulNode {
 
   draw() {
     const result = super.draw();
+    // CDU expects the child refs to be resolved, and expects to be fired before CDM of children
     this.componentDidUpdate(this._lastProps, this._lastState);
     return result;
   }
 
   @effect() handleMount() {
     this.componentDidMount();
-    this.setState(
-      this.constructor.getDerivedStateFromProps(this.props, this.state)
-    );
     return () => this.componentWillUnmount();
   }
 

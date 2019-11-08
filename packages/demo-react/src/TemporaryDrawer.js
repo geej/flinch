@@ -54,7 +54,7 @@ class TemporaryDrawer extends React.Component {
 
     return (
       <div>
-        <button variant="contained" onClick={this.toggleDrawer('left', true)}>Open Left</button>
+        <Button variant="contained" onClick={this.toggleDrawer('left', true)}>Open Left</Button>
         <Drawer open={this.state.left} onClose={this.toggleDrawer('left', false)}>
           <div
             tabIndex={0}

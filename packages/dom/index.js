@@ -16,13 +16,13 @@ class DOMNode extends ForkNode {
   draw() {
     const tag = this.getTag(this.component);
 
-    const { children, className, ...otherProps } = this.props;
+    const { children, style, className, ...otherProps } = this.props;
     for (let key in otherProps) {
       const [, action] = /^on([a-zA-Z]+)$/.exec(key) || [];
 
       if (action) {
         tag.addEventListener(action.toLowerCase(), otherProps[key]);
-      } else if (otherProps[key] !== undefined) {
+      } else if (otherProps[key] || otherProps[key] === 0) {
         tag.setAttribute(key, otherProps[key]);
       }
     }
@@ -31,9 +31,21 @@ class DOMNode extends ForkNode {
       tag.setAttribute("class", className);
     }
 
+    if (style) {
+      if (typeof style === 'string') {
+        tag.setAttribute('style', style);
+      } else {
+        for (let i in style) {
+          tag.style[i] = style[i];
+        }
+      }
+    }
+
     tag.appendChild(this.drawChildren());
 
+    tag.node = this;
     this.root = tag;
+    this._ref && this._ref(tag);
     return tag;
   }
 
