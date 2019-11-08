@@ -16,10 +16,15 @@ const Util = {
     );
   },
   shouldDrawNode: node => node || node === 0,
-  drawNode: node =>
-    (Util.isPrimitive(node) || !node)
+  drawNode: node => {
+    if (!Util.shouldDrawNode(node)) {
+      return;
+    }
+
+    return Util.isPrimitive(node)
       ? document.createTextNode(node)
-      : node.draw(),
+      : node.draw()
+  },
   updateNode: (context, oldNode, newNode) => {
     let node = oldNode;
 

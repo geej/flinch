@@ -20,13 +20,12 @@ export default function effect(...keys) {
 
         const result = update.apply(this, [newProps]);
         if (this._mounted) {
-          this._callbacksToFire = [];
           target._lifecycleCallbacks.forEach(cb => {
             if (
               cb.keys.filter(prop => Array.from(changedProps).includes(prop))
                 .length
             ) {
-              this._callbacksToFire.push(cb.callback);
+              cb.callback.apply(this);
             }
           });
         }
@@ -41,12 +40,9 @@ export default function effect(...keys) {
         if (!this._mounted) {
           this._mounted = true;
           target._lifecycleCallbacks.map(cb => cb.callback.apply(this));
-        } else {
-          this._callbacksToFire.forEach(cb => cb.apply(this));
-          delete this._callbacksToFire;
         }
         return result;
-      }
+      };
     }
 
     target._lifecycleCallbacks.push({ keys, callback: target[name] });

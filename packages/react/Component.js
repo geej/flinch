@@ -25,15 +25,21 @@ export default class Component extends StatefulNode {
   context = {};
 
   update(newProps) {
-    const oldProps = this.props;
-    const oldState = this.state;
+    this._lastProps = this.props;
+    this._lastState = this.state;
 
     this.state = {
       ...this.state,
       ...this.constructor.getDerivedStateFromProps(newProps || {}, this.state)
     };
+
     super.update(newProps);
-    this.componentDidUpdate(oldProps, oldState);
+  }
+
+  draw() {
+    const result = super.draw();
+    this.componentDidUpdate(this._lastProps, this._lastState);
+    return result;
   }
 
   @effect() handleMount() {
