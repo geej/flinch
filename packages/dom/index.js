@@ -54,16 +54,14 @@ class DOMNode extends ForkNode {
     Util.getFlatChildren(this.props.children).forEach(child => {
       const node = Util.drawNode(child);
 
-      if (Util.shouldDrawNode(node)) {
+      if (node instanceof Element) {
         fragment.appendChild(node);
+      } else if (node || node === 0) {
+        fragment.appendChild(document.createTextNode(node));
       }
     });
 
     return fragment;
-  }
-
-  render() {
-    return this;
   }
 }
 
