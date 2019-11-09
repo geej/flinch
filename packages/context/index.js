@@ -1,6 +1,6 @@
-import Flinch, { StatefulNode } from "@flinch/core";
-import "@flinch/props-defaults";
-import effect from "@flinch/effect";
+import Flinch, { StatefulNode } from '@flinch/core';
+import '@flinch/props-defaults';
+import effect from '@flinch/effect';
 
 export function createContext(value) {
   class Provider extends StatefulNode {
@@ -12,7 +12,7 @@ export function createContext(value) {
       return this.props.value;
     }
 
-    @effect("value") pushContext() {
+    @effect('value') pushContext() {
       this.callbacks.forEach(cb => cb(this.props.value));
     }
 
@@ -40,10 +40,7 @@ export function createContext(value) {
     }
 
     render() {
-      return (
-        typeof this.props.children === "function" &&
-        this.props.children(this.state.value)
-      );
+      return typeof this.props.children === 'function' && this.props.children(this.state.value);
     }
   }
 

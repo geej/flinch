@@ -1,5 +1,5 @@
-import Flinch, { StatefulNode } from "@flinch/core";
-import effect from "@flinch/effect";
+import Flinch, { StatefulNode } from '@flinch/core';
+import effect from '@flinch/effect';
 
 export default class Component extends StatefulNode {
   static getDerivedStateFromProps(props, state) {
@@ -55,7 +55,7 @@ export default class Component extends StatefulNode {
 
   setState(state, callback = () => {}) {
     let newState;
-    if (typeof state === "function") {
+    if (typeof state === 'function') {
       newState = super.setState(state(this.state));
     } else {
       newState = super.setState(state);
@@ -65,4 +65,4 @@ export default class Component extends StatefulNode {
   }
 }
 
-Object.defineProperty(Component.prototype, "isReactComponent", { value: true });
+Object.defineProperty(Component.prototype, 'isReactComponent', { value: true });

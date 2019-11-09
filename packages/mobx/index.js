@@ -1,7 +1,7 @@
-import Flinch, { StatefulNode } from "@flinch/core";
-import effect from "@flinch/effect";
+import Flinch, { StatefulNode } from '@flinch/core';
+import effect from '@flinch/effect';
 
-import { observe } from "mobx";
+import { observe } from 'mobx';
 
 /**
  * Observer wraps a StatefulNode, and triggers a Flinch state change when
@@ -17,20 +17,12 @@ export function observer(Component) {
     componentDidMount() {
       // TODO: This ref can change if the component's root node changes
       if (this.ref) {
-        observe(this.ref, () =>
-          this.setState({ mutator: this.state.mutator + 1 })
-        );
+        observe(this.ref, () => this.setState({ mutator: this.state.mutator + 1 }));
       }
     }
 
     render() {
-      return (
-        <Component
-          ref={ref => (this.ref = ref)}
-          _mobXMutator={this.state.mutator}
-          {...this.props}
-        />
-      );
+      return <Component ref={ref => (this.ref = ref)} _mobXMutator={this.state.mutator} {...this.props} />;
     }
   };
 }

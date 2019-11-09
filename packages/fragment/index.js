@@ -1,4 +1,4 @@
-import Flinch, {ForkNode, Util} from "@flinch/core";
+import Flinch, { ForkNode, Util } from '@flinch/core';
 
 export default class Fragment extends ForkNode {
   draw() {
