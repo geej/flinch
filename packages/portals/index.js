@@ -1,30 +1,33 @@
 import Flinch, { StatefulNode } from "@flinch/core";
 
-class PortalNode extends StatefulNode {
-  // update() {
-  //   this.props.children[0].update();
-  // }
+const portalMap = new Map();
 
+class PortalNode extends StatefulNode {
   render() {
     return this.props.children;
   }
 
-  replaceRoot(node) {
-    if (!this.props.destination) {
-      console.log('NO DESTINATION');
-      return;
-    }
+  draw() {
+    const node = this.props.children.draw();
+    const portal = portalMap.get(this.props.destination);
 
-    this.props.destination.innerHTML = "";
-    this.props.destination.appendChild(node);
-    this.root = node;
-    return this.root;
+    if (portal) {
+      this.props.destination.replaceChild(node, portal);
+    } else {
+      this.props.destination.appendChild(node);
+    }
+    return node;
   }
 }
 
-export function createPortal(child, container) {
-  const node = Flinch.create(PortalNode, { destination: container }, child);
-  node.update();
+export function createPortal(child, destination) {
+  const portal = portalMap.get(destination);
+  if (portal) {
+    destination.removeChild(portal);
+  }
 
-  return undefined;
+  const node = Flinch.create(PortalNode, { destination }, child);
+
+  child.forceUpdate();
+  return node;
 }

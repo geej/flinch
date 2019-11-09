@@ -18,30 +18,39 @@ export default class Component extends StatefulNode {
   //UNSAFE_componentWillUpdate(nextProps, nextState) {}
   //UNSAFE_componentWillReceiveProps(nextProps) {}
 
+  get type() {
+    return this.component;
+  }
+
   context = {};
 
   update(newProps) {
-    const oldProps = this.props;
-    const oldState = this.state;
+    this._lastProps = this.props;
+    this._lastState = this.state;
 
     this.state = {
       ...this.state,
       ...this.constructor.getDerivedStateFromProps(newProps || {}, this.state)
     };
+
     super.update(newProps);
-    this.componentDidUpdate(oldProps, oldState);
+  }
+
+  draw() {
+    const result = super.draw();
+    // CDU expects the child refs to be resolved, and expects to be fired before CDM of children
+    this.componentDidUpdate(this._lastProps, this._lastState);
+    return result;
   }
 
   @effect() handleMount() {
     this.componentDidMount();
-    this.setState(
-      this.constructor.getDerivedStateFromProps(this.props, this.state)
-    );
     return () => this.componentWillUnmount();
   }
 
-  forceUpdate() {
-    this.update();
+  forceUpdate(callback) {
+    super.forceUpdate();
+    callback && callback();
   }
 
   setState(state, callback = () => {}) {

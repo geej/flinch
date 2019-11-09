@@ -16,10 +16,15 @@ const Util = {
     );
   },
   shouldDrawNode: node => node || node === 0,
-  drawNode: node =>
-    Util.isPrimitive(node)
+  drawNode: node => {
+    if (!Util.shouldDrawNode(node)) {
+      return;
+    }
+
+    return Util.isPrimitive(node)
       ? document.createTextNode(node)
-      : node.replaceRoot(node.draw()),
+      : node.draw()
+  },
   updateNode: (context, oldNode, newNode) => {
     let node = oldNode;
 
@@ -37,6 +42,16 @@ const Util = {
     }
 
     return node;
+  },
+  cleanProps: props => {
+    if (!props) return;
+
+    return Object.keys(props).reduce((memo, key) => {
+      if (props[key] !== undefined) {
+        memo[key] = props[key];
+      }
+      return memo;
+    }, {});
   }
 };
 
