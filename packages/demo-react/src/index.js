@@ -42,19 +42,19 @@ ReactDOM.render(
     <ButtonAppBar />
     <TemporaryDrawer />
     <App />
-    {/*<React.Fragment>*/}
-      {/*hello there*/}
-      {/*<div>*/}
-        {/*how*/}
-      {/*</div>*/}
-      {/*<div>*/}
-        {/*are*/}
-      {/*</div>*/}
-      {/*<div>*/}
-        {/*you*/}
-      {/*</div>*/}
-      {/*?*/}
-    {/*</React.Fragment>*/}
+    <React.Fragment>
+      hello there
+      <div>
+        how
+      </div>
+      <div>
+        are
+      </div>
+      <div>
+        you
+      </div>
+      ?
+    </React.Fragment>
     <div>
       <div>
         <div>

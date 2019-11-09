@@ -41,24 +41,33 @@ class DOMNode extends ForkNode {
       }
     }
 
-    tag.appendChild(this.drawChildren());
+    tag.appendChild(this._drawChildren());
 
     tag.node = this;
+
+    // Need to redraw on state change
+    this.root && this.root.parentNode && this.root.parentNode.replaceChild(tag, this.root);
+
     this.root = tag;
     this._ref && this._ref(tag);
     return tag;
   }
 
-  drawChildren() {
-    const fragment = document.createDocumentFragment();
-    Util.getFlatChildren(this.props.children).forEach(child => {
-      const node = Util.drawNode(child);
+  _recursiveAppendNode(fragment, node) {
+    if (Array.isArray(node)) {
+      node.forEach(child => this._recursiveMountNode(fragment, child));
+    } else if (node instanceof Element) {
+      fragment.appendChild(node);
+    } else if (node || node === 0) {
+      fragment.appendChild(document.createTextNode(node));
+    }
+  }
 
-      if (node instanceof Element) {
-        fragment.appendChild(node);
-      } else if (node || node === 0) {
-        fragment.appendChild(document.createTextNode(node));
-      }
+  _drawChildren() {
+    const fragment = document.createDocumentFragment();
+
+    Util.getFlatChildren(this.props.children).forEach(child => {
+      this._recursiveAppendNode(fragment, Util.drawNode(child));
     });
 
     return fragment;

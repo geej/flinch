@@ -1,7 +1,8 @@
 import { render } from "@flinch/dom";
 import { createContext } from "@flinch/context";
 import { createPortal } from "@flinch/portals";
-import Flinch, { Node } from "@flinch/core";
+import Flinch from "@flinch/core";
+import Fragment from '@flinch/fragment';
 import "@flinch/props-defaults";
 import Component from "./Component";
 import Children from "./Children";
@@ -32,13 +33,6 @@ const PureComponent = Component;
   Is the element a Flinch node?
  */
 const isValidElement = element => element instanceof Node;
-
-// TODO: Move this to the fragment package. It is not a react-specific feature
-class Fragment extends Component {
-  render() {
-    return this.props.children[0];
-  }
-}
 
 /*
   Synthetic events have a function to halt recycling. Since we're not using synthetic
