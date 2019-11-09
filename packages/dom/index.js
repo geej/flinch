@@ -55,7 +55,7 @@ class DOMNode extends ForkNode {
 
   _recursiveAppendNode(fragment, node) {
     if (Array.isArray(node)) {
-      node.forEach(child => this._recursiveMountNode(fragment, child));
+      node.forEach(child => this._recursiveAppendNode(fragment, child));
     } else if (node instanceof Element) {
       fragment.appendChild(node);
     } else if (node || node === 0) {
