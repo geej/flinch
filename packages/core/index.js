@@ -67,18 +67,12 @@ export class Node {
 }
 
 export class ForkNode extends Node {
-  updateChildren(oldChildren, newChildren) {
-    if (!Array.isArray(newChildren)) {
-      return Util.updateNode(this, oldChildren, newChildren);
+  updateChildren(oldChild, newChild) {
+    if (Array.isArray(newChild)) {
+      return newChild.map((child, index) => this.updateChildren(oldChild[index], child));
+    } else {
+      return Util.updateNode(this, oldChild, newChild);
     }
-
-    return newChildren.map((child, index) => {
-      if (Array.isArray(child) && Array.isArray(oldChildren[index])) {
-        return this.updateChildren(oldChildren[index], child);
-      } else {
-        return Util.updateNode(this, oldChildren[index], child);
-      }
-    });
   }
 
   update(props = this.props) {
