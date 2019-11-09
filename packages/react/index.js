@@ -11,6 +11,9 @@ const cloneElement = (element, props, children) => Object.assign(Object.create(O
 const createFactory = Klass => (props, children) =>
   Flinch.create(Klass, props, ...(children || []));
 
+/*
+  Find the closest child that is a DOMNode. If that node is mounted, return the mounted Element.
+ */
 const findDOMNode = node => {
   while (node && !node.root) {
     node = node.childNode;
@@ -19,18 +22,35 @@ const findDOMNode = node => {
   return node && node.root;
 };
 
-// TODO
+/*
+  A PureComponent is just a Component with a stricter shouldComponentUpdate function.
+  TODO: We can implement this at any time.
+ */
 const PureComponent = Component;
+
+/*
+  Is the element a Flinch node?
+ */
 const isValidElement = element => element instanceof Node;
+
+// TODO: Move this to the fragment package. It is not a react-specific feature
 class Fragment extends Component {
   render() {
     return this.props.children[0];
   }
 }
 
-Flinch.registerType({ check: tag => tag === Fragment, getClass: () => Fragment });
+/*
+  Synthetic events have a function to halt recycling. Since we're not using synthetic
+  events, we need to patch a no-op function into the native Event prototype.
+ */
 Event.prototype.persist = () => {};
 
+/*
+  ReactDOM.hydrate is the same as render, but tries to use the dom nodes that already exist
+  in the target Element. We can skip this for now with no adverse effects.
+  TODO: We can implement this at any time
+ */
 const hydrate = render;
 
 export default {

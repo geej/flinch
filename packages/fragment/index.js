@@ -13,8 +13,4 @@ class Fragment extends ForkNode {
 
     return fragment;
   }
-
-  render() {
-    return this;
-  }
 }

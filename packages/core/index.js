@@ -62,9 +62,7 @@ export class Node {
   }
 
   draw() {
-    if (Util.shouldDrawNode(this.childNode)) {
-      return Util.drawNode(this.childNode);
-    }
+    return Util.drawNode(this.childNode);
   }
 }
 
@@ -87,6 +85,10 @@ export class ForkNode extends Node {
     const { ref, ...otherProps } = props;
     this._ref = ref;
     this.props = { ...otherProps, children: this.updateChildren(this.props.children, props.children) };
+  }
+
+  render() {
+    return this;
   }
 }
 
