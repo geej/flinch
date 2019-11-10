@@ -5,8 +5,11 @@ const portalMap = new Map();
 class PortalNode extends ForkNode {
   draw() {
     const node = portalMap.get(this.props.destination);
+    const newNode = this.props.children.draw();
     if (!node) {
-      this.props.destination.appendChild(this.props.children.draw());
+      this.props.destination.appendChild(newNode);
+    } else {
+      newNode.draw();
     }
     portalMap.set(this.props.destination, node);
   }

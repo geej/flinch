@@ -1,3 +1,5 @@
+import Node from '../Node';
+
 const Util = {
   isPrimitive: node => node !== Object(node),
   getFlatChildren: function(children) {
@@ -21,6 +23,11 @@ const Util = {
       : node.draw()
   },
   updateNode: (context, oldNode, newNode) => {
+    // Need to shallow clone all nodes here on the off chance that a node is rendered in two places.
+    if (oldNode instanceof Node) {
+      oldNode = Util.cloneNode(oldNode);
+    }
+
     let node = oldNode;
 
     if (
@@ -47,7 +54,8 @@ const Util = {
       }
       return memo;
     }, {});
-  }
+  },
+  cloneNode: element => Object.assign(Object.create(Object.getPrototypeOf(element)), element)
 };
 
 export default Util;
