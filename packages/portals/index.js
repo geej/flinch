@@ -1,33 +1,19 @@
-import Flinch, { StatefulNode } from "@flinch/core";
+import Flinch, { ForkNode } from '@flinch/core';
 
 const portalMap = new Map();
 
-class PortalNode extends StatefulNode {
-  render() {
-    return this.props.children;
-  }
-
+class PortalNode extends ForkNode {
   draw() {
-    const node = this.props.children.draw();
-    const portal = portalMap.get(this.props.destination);
-
-    if (portal) {
-      this.props.destination.replaceChild(node, portal);
-    } else {
-      this.props.destination.appendChild(node);
+    const node = portalMap.get(this.props.destination);
+    if (!node) {
+      this.props.destination.appendChild(this.props.children.draw());
     }
-    return node;
+    portalMap.set(this.props.destination, node);
   }
 }
 
 export function createPortal(child, destination) {
-  const portal = portalMap.get(destination);
-  if (portal) {
-    destination.removeChild(portal);
-  }
-
-  const node = Flinch.create(PortalNode, { destination }, child);
-
-  child.forceUpdate();
-  return node;
+  return Flinch.create(PortalNode, { destination }, child);
 }
+
+Flinch.registerType({ check: klass => klass === PortalNode, getClass: () => PortalNode });
