@@ -1,7 +1,7 @@
 import ForkNode from '../ForkNode';
+import Primitive from '../Primitive';
 
 const Util = {
-  isPrimitive: node => node !== Object(node),
   getFlatChildren: function(children) {
     if (!children && children !== 0) return [];
 
@@ -17,22 +17,25 @@ const Util = {
       []
     );
   },
-  drawNode: node => {
-    return Util.isPrimitive(node)
-      ? node
-      : node.draw()
-  },
   updateNode: (context, oldNode, newNode) => {
     // Need to shallow clone all forknodes here on the off chance that a node is rendered in two places.
     if (oldNode instanceof ForkNode) {
       oldNode = Util.cloneNode(oldNode);
     }
 
+    if (newNode !== Object(newNode)) {
+      if (oldNode instanceof Primitive) {
+        oldNode.update(newNode);
+        return oldNode;
+      } else {
+        return new Primitive(newNode);
+      }
+    }
+
     let node = oldNode;
 
     if (
       !oldNode ||
-      Util.isPrimitive(newNode) ||
       oldNode.component !== newNode.component
     ) {
       node = newNode;

@@ -18,7 +18,7 @@ export default class Node {
   }
 
   draw() {
-    const node = Util.drawNode(this.childNode);
+    const node = this.childNode.draw();
     this._ref && this._ref(this.root || this);
     return node;
   }

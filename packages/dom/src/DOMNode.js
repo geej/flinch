@@ -1,6 +1,7 @@
 import {ForkNode, Util} from '@flinch/core';
 
 export default class DOMNode extends ForkNode {
+  _eventListeners = [];
   getTag() { throw new Error('getTag must be extended'); }
 
   draw() {
@@ -10,7 +11,14 @@ export default class DOMNode extends ForkNode {
     for (let key in otherProps) {
       const [, action] = /^on([a-zA-Z]+)$/.exec(key) || [];
 
+      // Unbind old event listeners
+      let listener;
+      while (listener = this._eventListeners.pop()) {
+        tag.removeEventListener(listener.event, listener.handler);
+      }
+
       if (action) {
+        this._eventListeners.push({ event: action.toLowerCase(), handler: otherProps[key] });
         tag.addEventListener(action.toLowerCase(), otherProps[key]);
       } else if (otherProps[key] || otherProps[key] === 0) {
         tag.setAttribute(key, otherProps[key]);
@@ -41,20 +49,18 @@ export default class DOMNode extends ForkNode {
   _recursiveAppendNode(tag, node) {
     if (Array.isArray(node)) {
       node.forEach(child => this._recursiveAppendNode(tag, child));
-    } else if (node instanceof Element) {
+    // DOM Node, not Flinch Node
+    } else if (node instanceof Node) {
       if (node.parentNode !== tag) {
         // TODO: Must insert in the right place
         tag.appendChild(node);
       }
-    } else if (node || node === 0) {
-      // TODO: Must insert in the right place... also how are we going to detect these are the same?
-      tag.appendChild(document.createTextNode(node));
     }
   }
 
   _drawChildren(tag) {
     Util.getFlatChildren(this.props.children).forEach(child => {
-      this._recursiveAppendNode(tag, Util.drawNode(child));
+      this._recursiveAppendNode(tag, child.draw());
     });
   }
 }

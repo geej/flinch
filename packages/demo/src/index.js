@@ -34,7 +34,7 @@ class StatefulComponent3 extends StatefulNode {
 
   render() {
     return (
-      <div onClick={() => this.setState({ clicked: this.state.clicked + 1 })} style={ this.state.clicked > 0 && "background-color: red; " }>
+      <div onClick={() => { console.log(this.state.clicked+1);this.setState({ clicked: this.state.clicked + 1 })}} style={ this.state.clicked > 0 && "background-color: red; " }>
         { this.state.clicked }
       </div>
     );

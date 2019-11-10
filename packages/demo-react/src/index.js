@@ -64,7 +64,7 @@ ReactDOM.render(
       </div>
     </div>
     <SimpleExpansionPanel/>
-    {/*<Portal>hi</Portal>*/}
+    <Portal>hi</Portal>
   </div>,
   document.getElementById("root")
 );
