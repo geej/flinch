@@ -29,6 +29,18 @@ class StatefulComponent2 extends StatefulNode {
   }
 }
 
+class StatefulComponent3 extends StatefulNode {
+  state = { clicked: 0 };
+
+  render() {
+    return (
+      <div onClick={() => this.setState({ clicked: this.state.clicked + 1 })} style={ this.state.clicked > 0 && "background-color: red; " }>
+        { this.state.clicked }
+      </div>
+    );
+  }
+}
+
 const NodeAsPropComponent = ({ node }) => <div><div>{ node }</div></div>;
 class StatefulComponent extends StatefulNode {
   state = {
@@ -46,7 +58,7 @@ class StatefulComponent extends StatefulNode {
           </button>
           <FunctionalComponent counter={this.state.clicked} />
           {this.state.clicked < 10 && "This will go away at 10"}
-          <StatefulComponent2 counter={this.state.clicked} />
+          <StatefulComponent3 counter={this.state.clicked} />
           <Consumer>
             {
               value => <FunctionalComponent counter={`Via Context: ${value}`} />
@@ -55,6 +67,7 @@ class StatefulComponent extends StatefulNode {
           { this.props.children }
         </Provider>
         aaaaaa
+        <StatefulComponent3 counter={this.state.clicked} />
       </div>
     );
   }
@@ -63,7 +76,7 @@ class StatefulComponent extends StatefulNode {
 render(
   <div height="200" width="200">
     <StatefulComponent>
-      <NodeAsPropComponent node={<StatefulComponent2 />} />
+      <NodeAsPropComponent node={<StatefulComponent3 />} />
     </StatefulComponent>
   </div>,
   document.getElementById("root")

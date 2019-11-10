@@ -1,4 +1,4 @@
-import Node from '../Node';
+import ForkNode from '../ForkNode';
 
 const Util = {
   isPrimitive: node => node !== Object(node),
@@ -23,8 +23,8 @@ const Util = {
       : node.draw()
   },
   updateNode: (context, oldNode, newNode) => {
-    // Need to shallow clone all nodes here on the off chance that a node is rendered in two places.
-    if (oldNode instanceof Node) {
+    // Need to shallow clone all forknodes here on the off chance that a node is rendered in two places.
+    if (oldNode instanceof ForkNode) {
       oldNode = Util.cloneNode(oldNode);
     }
 

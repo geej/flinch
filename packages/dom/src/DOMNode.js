@@ -37,7 +37,6 @@ export default class DOMNode extends ForkNode {
 
     // Need to redraw on state change
     this.root && this.root.parentNode && this.root.parentNode.replaceChild(tag, this.root);
-
     this.root = tag;
     this._ref && this._ref(tag);
     return tag;
