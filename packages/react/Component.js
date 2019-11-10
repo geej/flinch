@@ -39,7 +39,7 @@ export default class Component extends StatefulNode {
   draw() {
     const result = super.draw();
     // CDU expects the child refs to be resolved, and expects to be fired before CDM of children
-    this.componentDidUpdate(this._lastProps, this._lastState);
+    setTimeout(() => this.componentDidUpdate(this._lastProps, this._lastState), 0);
     return result;
   }
 

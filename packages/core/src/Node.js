@@ -3,8 +3,7 @@ import Util from './util';
 export default class Node {
   update(props = this.props) {
     const { ref, ...otherProps } = props;
-    ref && ref(this.root || this);
-
+    this._ref = ref;
     this.props = otherProps;
     this.childNode = Util.updateNode(this, this.childNode, this.render());
   }
@@ -19,6 +18,8 @@ export default class Node {
   }
 
   draw() {
-    return Util.drawNode(this.childNode);
+    const node = Util.drawNode(this.childNode);
+    this._ref && this._ref(this.root || this);
+    return node;
   }
 }

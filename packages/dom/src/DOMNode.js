@@ -4,7 +4,7 @@ export default class DOMNode extends ForkNode {
   getTag() { throw new Error('getTag must be extended'); }
 
   draw() {
-    const tag = this.getTag(this.component);
+    const tag = this.root || this.getTag(this.component);
 
     const { children, style, className, ...otherProps } = this.props;
     for (let key in otherProps) {
@@ -31,34 +31,30 @@ export default class DOMNode extends ForkNode {
       }
     }
 
-    tag.appendChild(this._drawChildren());
+    this._drawChildren(tag);
 
-    tag.node = this;
-
-    // Need to redraw on state change
-    this.root && this.root.parentNode && this.root.parentNode.replaceChild(tag, this.root);
     this.root = tag;
     this._ref && this._ref(tag);
     return tag;
   }
 
-  _recursiveAppendNode(fragment, node) {
+  _recursiveAppendNode(tag, node) {
     if (Array.isArray(node)) {
-      node.forEach(child => this._recursiveAppendNode(fragment, child));
+      node.forEach(child => this._recursiveAppendNode(tag, child));
     } else if (node instanceof Element) {
-      fragment.appendChild(node);
+      if (node.parentNode !== tag) {
+        // TODO: Must insert in the right place
+        tag.appendChild(node);
+      }
     } else if (node || node === 0) {
-      fragment.appendChild(document.createTextNode(node));
+      // TODO: Must insert in the right place... also how are we going to detect these are the same?
+      tag.appendChild(document.createTextNode(node));
     }
   }
 
-  _drawChildren() {
-    const fragment = document.createDocumentFragment();
-
+  _drawChildren(tag) {
     Util.getFlatChildren(this.props.children).forEach(child => {
-      this._recursiveAppendNode(fragment, Util.drawNode(child));
+      this._recursiveAppendNode(tag, Util.drawNode(child));
     });
-
-    return fragment;
   }
 }
