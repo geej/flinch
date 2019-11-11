@@ -8,10 +8,17 @@ class PortalNode extends ForkNode {
     const newNode = this.props.children.draw();
     if (!node) {
       this.props.destination.appendChild(newNode);
-    } else {
-      newNode.draw();
     }
-    portalMap.set(this.props.destination, node);
+    portalMap.set(this.props.destination, newNode);
+  }
+
+  unmount() {
+    const node = portalMap.get(this.props.destination);
+
+    if (node) {
+      this.props.destination.removeChild(node);
+      portalMap.delete(this.props.destination);
+    }
   }
 }
 

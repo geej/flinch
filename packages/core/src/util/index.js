@@ -28,6 +28,7 @@ const Util = {
         oldNode.update(newNode);
         return oldNode;
       } else {
+        oldNode && oldNode.unmount && oldNode.unmount();
         return new Primitive(newNode);
       }
     }
@@ -38,6 +39,8 @@ const Util = {
       !oldNode ||
       oldNode.component !== newNode.component
     ) {
+      // Unmount old node
+      oldNode && oldNode.unmount && oldNode.unmount();
       node = newNode;
     }
 

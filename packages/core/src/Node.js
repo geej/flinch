@@ -13,6 +13,10 @@ export default class Node {
     return this.draw();
   }
 
+  unmount() {
+    this.childNode.unmount();
+  }
+
   render() {
     throw new Error("render must be defined by a child class!");
   }

@@ -16,6 +16,10 @@ export default class ForkNode extends Node {
     this.props = { ...otherProps, children: this.updateChildren(this.props.children, props.children) };
   }
 
+  unmount() {
+    Util.getFlatChildren(this.props.children).forEach(child => child && child.unmount && child.unmount());
+  }
+
   render() {
     return this;
   }

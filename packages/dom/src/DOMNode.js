@@ -46,21 +46,38 @@ export default class DOMNode extends ForkNode {
     return tag;
   }
 
-  _recursiveAppendNode(tag, node) {
+  _recursiveGetNodes(array, node) {
     if (Array.isArray(node)) {
-      node.forEach(child => this._recursiveAppendNode(tag, child));
-    // DOM Node, not Flinch Node
-    } else if (node instanceof Node) {
-      if (node.parentNode !== tag) {
-        // TODO: Must insert in the right place
-        tag.appendChild(node);
-      }
+      node.forEach(child => this._recursiveGetNodes(array, child));
+      // DOM Node, not Flinch Node
+    } else {
+      array.push(node);
     }
   }
-
   _drawChildren(tag) {
+    const array = [];
     Util.getFlatChildren(this.props.children).forEach(child => {
-      this._recursiveAppendNode(tag, child.draw());
+      this._recursiveGetNodes(array, child.draw());
     });
+
+    const childNodes = Array.from(tag.childNodes);
+
+    childNodes.forEach(node => {
+      if (array.indexOf(node) === -1) {
+        tag.removeChild(node);
+      }
+    });
+
+    array.forEach(node => {
+      if (!node && node !== 0) return;
+      if (childNodes.indexOf(node) === -1) {
+        // TODO: Put this in the right spot
+        tag.appendChild(node);
+      }
+    });
+
+
+
+    // TODO: Must remove nodes that have been removed
   }
 }

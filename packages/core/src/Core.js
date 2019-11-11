@@ -30,7 +30,6 @@ export default class Core {
         };
         const instance = new Klass(fullProps, {});
 
-        // React is dumb. Extract this to middleware and put in react
         instance.props = fullProps;
         instance.component = tag;
 
