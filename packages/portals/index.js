@@ -1,8 +1,6 @@
 import Flinch, { ForkNode } from '@flinch/core';
 
-const portalMap = new Map();
-
-class PortalNode extends ForkNode {
+export default class PortalNode extends ForkNode {
   draw() {
     const node = this.props.children.draw();
     if (!this.mountPoint) {
@@ -16,10 +14,6 @@ class PortalNode extends ForkNode {
       this.props.destination.removeChild(this.mountPoint);
     }
   }
-}
-
-export function createPortal(child, destination) {
-  return Flinch.create(PortalNode, { destination }, child);
 }
 
 Flinch.registerType({ check: klass => klass === PortalNode, getClass: () => PortalNode });
