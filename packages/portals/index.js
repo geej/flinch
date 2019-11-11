@@ -4,20 +4,16 @@ const portalMap = new Map();
 
 class PortalNode extends ForkNode {
   draw() {
-    const node = portalMap.get(this.props.destination);
-    const newNode = this.props.children.draw();
-    if (!node) {
-      this.props.destination.appendChild(newNode);
+    const node = this.props.children.draw();
+    if (!this.mountPoint) {
+      this.props.destination.appendChild(node);
     }
-    portalMap.set(this.props.destination, newNode);
+    this.mountPoint = node;
   }
 
   unmount() {
-    const node = portalMap.get(this.props.destination);
-
-    if (node) {
-      this.props.destination.removeChild(node);
-      portalMap.delete(this.props.destination);
+    if (this.mountPoint) {
+      this.props.destination.removeChild(this.mountPoint);
     }
   }
 }
