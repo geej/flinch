@@ -23,7 +23,11 @@ export default class Node {
 
   draw() {
     const node = this.childNode.draw();
-    this._ref && this._ref(this.root || this);
+    this._ref && this._ref(this.getRef());
     return node;
+  }
+
+  getRef() {
+    return this.root || this;
   }
 }

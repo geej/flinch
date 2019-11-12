@@ -28,7 +28,8 @@ export default class Core {
           children: props && props.children && !(Array.isArray(props.children) && props.children.length === 0) && props.children || children
           //children: props && props.children || children
         };
-        const instance = new Klass(fullProps, {});
+
+        const instance = new Klass(fullProps);
 
         instance.props = fullProps;
         instance.component = tag;

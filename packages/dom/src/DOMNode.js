@@ -7,7 +7,7 @@ export default class DOMNode extends ForkNode {
   draw() {
     const tag = this.root || this.getTag(this.component);
 
-    const { children, style, className, ...otherProps } = this.props;
+    let { children, style, className, ...otherProps } = this.props;
 
     // Unbind old event listeners
     let listener;
@@ -32,17 +32,21 @@ export default class DOMNode extends ForkNode {
     }
 
     if (style) {
-      if (typeof style === 'string') {
-        tag.setAttribute('style', style);
-      } else {
-        for (let i in style) {
-          tag.style[i] = style[i];
-        }
+      if (typeof style !== 'string') {
+        style = Object.keys(style).reduce((memo, key) => {
+          const value = style[key];
+          const spinalKey = key.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`);
+
+          return `${memo} ${spinalKey}: ${typeof value === 'number' ? `${value}px` : value};`;
+        }, '');
       }
+
+      tag.setAttribute('style', style);
     }
 
     this._drawChildren(tag);
 
+    tag.node = this;
     this.root = tag;
     this._ref && this._ref(tag);
     return tag;
