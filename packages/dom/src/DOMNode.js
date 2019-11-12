@@ -8,18 +8,20 @@ export default class DOMNode extends ForkNode {
     const tag = this.root || this.getTag(this.component);
 
     const { children, style, className, ...otherProps } = this.props;
-    for (let key in otherProps) {
-      const [, action] = /^on([a-zA-Z]+)$/.exec(key) || [];
 
-      // Unbind old event listeners
-      let listener;
-      while (listener = this._eventListeners.pop()) {
-        tag.removeEventListener(listener.event, listener.handler);
-      }
+    // Unbind old event listeners
+    let listener;
+    while (listener = this._eventListeners.pop()) {
+      tag.removeEventListener(listener.event, listener.handler);
+    }
+
+    for (let key in otherProps) {
+      let [, action] = /^on([a-zA-Z]+)$/.exec(key) || [];
 
       if (action) {
-        this._eventListeners.push({ event: action.toLowerCase(), handler: otherProps[key] });
-        tag.addEventListener(action.toLowerCase(), otherProps[key]);
+        action = action.toLowerCase();
+        this._eventListeners.push({ event: action, handler: otherProps[key] });
+        tag.addEventListener(action, otherProps[key]);
       } else if (otherProps[key] || otherProps[key] === 0) {
         tag.setAttribute(key, otherProps[key]);
       }

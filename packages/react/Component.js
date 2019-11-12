@@ -52,13 +52,15 @@ export default class Component extends StatefulNode {
 
   setState(state, callback = () => {}) {
     let newState;
-    if (typeof state === 'function') {
-      newState = super.setState(state(this.state));
-    } else {
-      newState = super.setState(state);
-    }
+    setTimeout(() => {
+      if (typeof state === 'function') {
+        newState = super.setState(state(this.state));
+      } else {
+        newState = super.setState(state);
+      }
 
-    callback(newState);
+      callback(newState);
+    }, 0)
   }
 }
 
