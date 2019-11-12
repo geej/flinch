@@ -51,35 +51,28 @@ export default class DOMNode extends ForkNode {
   _recursiveGetNodes(array, node) {
     if (Array.isArray(node)) {
       node.forEach(child => this._recursiveGetNodes(array, child));
-      // DOM Node, not Flinch Node
     } else {
       array.push(node);
     }
   }
   _drawChildren(tag) {
-    const array = [];
+    const newNodes = [];
     Util.getFlatChildren(this.props.children).forEach(child => {
-      this._recursiveGetNodes(array, child.draw());
+      this._recursiveGetNodes(newNodes, child.draw());
     });
 
     const childNodes = Array.from(tag.childNodes);
 
     childNodes.forEach(node => {
-      if (array.indexOf(node) === -1) {
+      if (newNodes.indexOf(node) === -1) {
         tag.removeChild(node);
       }
     });
 
-    array.forEach(node => {
-      if (!node && node !== 0) return;
-      if (childNodes.indexOf(node) === -1) {
-        // TODO: Put this in the right spot
-        tag.appendChild(node);
+    newNodes.reverse().forEach((node, index, nodes) => {
+      if (node && childNodes.indexOf(node) === -1) {
+        tag.insertBefore(node, nodes[index - 1]);
       }
     });
-
-
-
-    // TODO: Must remove nodes that have been removed
   }
 }
