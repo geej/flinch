@@ -1,7 +1,7 @@
 import { render } from '@flinch/dom';
 import { createContext } from '@flinch/context';
-import { createPortal } from '@flinch/portals';
-import Flinch from '@flinch/core';
+import PortalNode from '@flinch/portals';
+import Flinch, { Node } from '@flinch/core';
 import Fragment from '@flinch/fragment';
 import '@flinch/props-defaults';
 import Component from './Component';
@@ -52,6 +52,13 @@ const hydrate = render;
   events, we need to patch a no-op function into the native Event prototype.
  */
 Event.prototype.persist = () => {};
+
+/*
+  Create a portal. In Flinch, a portal is just a component.
+ */
+function createPortal(child, destination) {
+  return Flinch.create(PortalNode, { destination }, child);
+}
 
 export default {
   Component,

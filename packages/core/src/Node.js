@@ -3,8 +3,7 @@ import Util from './util';
 export default class Node {
   update(props = this.props) {
     const { ref, ...otherProps } = props;
-    ref && ref(this.root || this);
-
+    this._ref = ref;
     this.props = otherProps;
     this.childNode = Util.updateNode(this, this.childNode, this.render());
   }
@@ -14,11 +13,17 @@ export default class Node {
     return this.draw();
   }
 
+  unmount() {
+    this.childNode.unmount();
+  }
+
   render() {
     throw new Error("render must be defined by a child class!");
   }
 
   draw() {
-    return Util.drawNode(this.childNode);
+    const node = this.childNode.draw();
+    this._ref && this._ref(this.root || this);
+    return node;
   }
 }

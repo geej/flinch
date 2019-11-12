@@ -25,8 +25,12 @@ export default class Component extends StatefulNode {
   context = {};
 
   update(newProps) {
-    this._lastProps = this.props;
-    this._lastState = this.state;
+    // componentDidUpdate will fire after this draw cycle is complete, so it's okay to store the
+    // timeout now. This also ensures that CDU will fire before CDM of the children, which is
+    // consistent with React's behavior.
+    const oldProps = this.props;
+    const oldState = this.state;
+    setTimeout(() => this.componentDidUpdate(oldProps, oldState), 0);
 
     this.state = {
       ...this.state,
@@ -34,13 +38,6 @@ export default class Component extends StatefulNode {
     };
 
     super.update(newProps);
-  }
-
-  draw() {
-    const result = super.draw();
-    // CDU expects the child refs to be resolved, and expects to be fired before CDM of children
-    this.componentDidUpdate(this._lastProps, this._lastState);
-    return result;
   }
 
   @effect() handleMount() {
@@ -55,13 +52,15 @@ export default class Component extends StatefulNode {
 
   setState(state, callback = () => {}) {
     let newState;
-    if (typeof state === 'function') {
-      newState = super.setState(state(this.state));
-    } else {
-      newState = super.setState(state);
-    }
+    setTimeout(() => {
+      if (typeof state === 'function') {
+        newState = super.setState(state(this.state));
+      } else {
+        newState = super.setState(state);
+      }
 
-    callback(newState);
+      callback(newState);
+    }, 0)
   }
 }
 

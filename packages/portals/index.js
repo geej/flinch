@@ -1,22 +1,19 @@
 import Flinch, { ForkNode } from '@flinch/core';
 
-const portalMap = new Map();
-
-class PortalNode extends ForkNode {
+export default class PortalNode extends ForkNode {
   draw() {
-    const node = portalMap.get(this.props.destination);
-    const newNode = this.props.children.draw();
-    if (!node) {
-      this.props.destination.appendChild(newNode);
-    } else {
-      newNode.draw();
+    const node = this.props.children.draw();
+    if (!this.mountPoint) {
+      this.props.destination.appendChild(node);
     }
-    portalMap.set(this.props.destination, node);
+    this.mountPoint = node;
   }
-}
 
-export function createPortal(child, destination) {
-  return Flinch.create(PortalNode, { destination }, child);
+  unmount() {
+    if (this.mountPoint) {
+      this.props.destination.removeChild(this.mountPoint);
+    }
+  }
 }
 
 Flinch.registerType({ check: klass => klass === PortalNode, getClass: () => PortalNode });
