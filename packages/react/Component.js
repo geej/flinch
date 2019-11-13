@@ -1,7 +1,8 @@
-import Flinch, { StatefulNode } from '@flinch/core';
-import effect from '@flinch/effect';
+export default class Component {
+  static contextType = null;
 
-export default class Component extends StatefulNode {
+  constructor(props, context) {}
+
   static getDerivedStateFromProps(props, state) {
     return state;
   }
@@ -19,48 +20,25 @@ export default class Component extends StatefulNode {
   //UNSAFE_componentWillReceiveProps(nextProps) {}
 
   get type() {
-    return this.component;
+    return this.constructor;
   }
 
   context = {};
+  state = {};
 
-  update(newProps) {
-    // componentDidUpdate will fire after this draw cycle is complete, so it's okay to store the
-    // timeout now. This also ensures that CDU will fire before CDM of the children, which is
-    // consistent with React's behavior.
-    const oldProps = this.props;
-    const oldState = this.state;
-    setTimeout(() => this.componentDidUpdate(oldProps, oldState), 0);
-
-    this.state = {
-      ...this.state,
-      ...this.constructor.getDerivedStateFromProps(newProps || {}, this.state)
-    };
-
-    super.update(newProps);
-  }
-
-  @effect() handleMount() {
-    this.componentDidMount();
-    return () => this.componentWillUnmount();
+  get props() {
+    return this.flinchNode.props;
   }
 
   forceUpdate(callback) {
-    super.forceUpdate();
+    this.flinchNode.forceUpdate();
     callback && callback();
   }
 
   setState(state, callback = () => {}) {
-    let newState;
-    setTimeout(() => {
-      if (typeof state === 'function') {
-        newState = super.setState(state(this.state));
-      } else {
-        newState = super.setState(state);
-      }
-
-      callback(newState);
-    }, 0)
+    const newState = typeof state === 'function' ? state(this.state) : state;
+    this.state = { ...this.state, ...newState };
+    this.forceUpdate(() => callback(this.state));
   }
 }
 

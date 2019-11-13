@@ -9,8 +9,27 @@ export default class Node {
   }
 
   forceUpdate() {
+    // TODO: if forceupdate happens on an intermediate node that produces heretofore unmounted DomNodes
+    // they will never be mounted, since we need to replace them on the parent Node, but the update does
+    // not affect parents of the node which is forceupdated.
+    //
+    // I did not plan for this.
+
     this.update();
-    return this.draw();
+
+    // Redraw from closest mounted ancestor
+    //
+    // If forceupdate happens on an intermediate node that produces heretofore unmounted DomNodes
+    // they will never be mounted, since we need to replace them on the parent Node, but the update does
+    // not affect parents of the node which is forceupdated.
+    //
+    // I did not plan for this.
+
+    let cursor = this;
+    while (cursor.parent && !cursor.root) {
+      cursor = cursor.parent;
+    }
+    return cursor.draw();
   }
 
   unmount() {
@@ -23,7 +42,11 @@ export default class Node {
 
   draw() {
     const node = this.childNode.draw();
-    this._ref && this._ref(this.root || this);
+    this._ref && this._ref(this.getRef());
     return node;
+  }
+
+  getRef() {
+    return this.root || this;
   }
 }

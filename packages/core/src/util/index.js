@@ -35,11 +35,7 @@ const Util = {
 
     let node = oldNode;
 
-    if (
-      !oldNode ||
-      oldNode.component !== newNode.component
-    ) {
-      // Unmount old node
+    if (!oldNode || oldNode.component !== newNode.component || oldNode.props.key !== newNode.props.key) {
       oldNode && oldNode.unmount && oldNode.unmount();
       node = newNode;
     }

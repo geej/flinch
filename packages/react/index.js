@@ -6,6 +6,7 @@ import Fragment from '@flinch/fragment';
 import '@flinch/props-defaults';
 import Component from './Component';
 import Children from './Children';
+import ReactNode from './ReactNode';
 
 const createElement = (...args) => Flinch.create(...args);
 const cloneElement = (element, props, children) =>
@@ -22,6 +23,8 @@ const createFactory = Klass => (props, children) => Flinch.create(Klass, props, 
   Find the closest child that is a DOMNode. If that node is mounted, return the mounted Element.
  */
 const findDOMNode = node => {
+  node = node instanceof Component ? node.flinchNode : node;
+
   while (node && !node.root) {
     node = node.childNode;
   }
@@ -59,6 +62,8 @@ Event.prototype.persist = () => {};
 function createPortal(child, destination) {
   return Flinch.create(PortalNode, { destination }, child);
 }
+
+Flinch.registerType({ check: klass => Component.isPrototypeOf(klass), getClass: () => ReactNode });
 
 export default {
   Component,
