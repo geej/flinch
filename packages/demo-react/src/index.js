@@ -40,6 +40,7 @@ class Portal extends React.Component {
 
 ReactDOM.render(
   <div height="200" width="200">
+    {/*<Button color="inherit">Login</Button>*/}
     <ButtonAppBar />
     <TemporaryDrawer />
     <App />

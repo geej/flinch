@@ -21,12 +21,9 @@ export default class Core {
     for (let type of this.typeRegistry) {
       if (type.check(tag)) {
         const Klass = type.getClass(tag);
-        // Bug here
         const fullProps = {
           ...Util.cleanProps(props),
-          // TODO: This is some bullshit but sometimes children can be an empty array, and we want to treat it as if that's nothing
-          children: props && props.children && !(Array.isArray(props.children) && props.children.length === 0) && props.children || children
-          //children: props && props.children || children
+          children: children && children.length !== 0 ? children : (props && props.children)
         };
 
         const instance = new Klass(fullProps);

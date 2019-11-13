@@ -1,7 +1,8 @@
 export default class Component {
-  constructor(props, context) {
+  static contextType = null;
 
-  }
+  constructor(props, context) {}
+
   static getDerivedStateFromProps(props, state) {
     return state;
   }
@@ -35,17 +36,9 @@ export default class Component {
   }
 
   setState(state, callback = () => {}) {
-    let newState;
-    setTimeout(() => {
-      if (typeof state === 'function') {
-        this.state = { ...this.state, ...state(this.state) };
-      } else {
-        this.state = { ...this.state, ...state };
-      }
-
-      this.forceUpdate();
-      callback(newState);
-    }, 0)
+    const newState = typeof state === 'function' ? state(this.state) : state;
+    this.state = { ...this.state, ...newState };
+    this.forceUpdate(() => callback(this.state));
   }
 }
 

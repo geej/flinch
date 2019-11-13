@@ -21,22 +21,25 @@ export function createContext(value) {
     }
   }
 
+  // This is poorly named
+  function findProvider(child) {
+    let node = child.parent;
+    while (node && !(node instanceof Provider)) {
+      node = node.parent;
+    }
+
+    return node && node.registerCallback(child.handleContextChange);
+  };
+
   class Consumer extends StatefulNode {
     state = { value };
 
     handleContextChange = value => this.setState({ value });
 
     @effect() findProvider() {
-      let node = this.parent;
-      while (node && !(node instanceof Provider)) {
-        node = node.parent;
-      }
-
-      if (node) {
-        this.setState({
-          value: node.registerCallback(this.handleContextChange)
-        });
-      }
+      this.setState({
+        value: findProvider(this)
+      });
     }
 
     render() {
@@ -44,5 +47,5 @@ export function createContext(value) {
     }
   }
 
-  return { Provider, Consumer };
+  return { Provider, Consumer, findProvider };
 }
