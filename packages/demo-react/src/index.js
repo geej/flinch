@@ -16,13 +16,13 @@ class App extends React.Component {
 
 function ButtonAppBar(props) {
   return (
-    <div style="flex-grow: 1;">
+    <div style={{ flexGrow: '1' }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" color="inherit" style="flex-grow: 1;">
+          <Typography variant="h6" color="inherit" style={{ flexGrow: '1' }}>
             News
           </Typography>
           <Button color="inherit">Login</Button>

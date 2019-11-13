@@ -55,7 +55,7 @@ class TemporaryDrawer extends React.Component {
     return (
       <div>
         { sideList }
-        <Button variant="contained" onClick={this.toggleDrawer('left', true)}>Open Left</Button>
+        <button variant="contained" onClick={this.toggleDrawer('left', true)}>Open Left</button>
         <Drawer open={this.state.left} onClose={this.toggleDrawer('left', false)}>
           <div
             tabIndex={0}
@@ -72,4 +72,3 @@ class TemporaryDrawer extends React.Component {
 }
 
 export default withStyles(styles)(TemporaryDrawer);
-// export default () => undefined;

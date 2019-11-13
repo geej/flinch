@@ -47,11 +47,8 @@ export default class ReactNode extends StatefulNode {
     // consistent with React's behavior.
     const oldProps = this.props;
     const oldState = this.reactComponent.state;
-    if (!this.mounted) {
-      this.mounted = true;
-      setTimeout(() => this.reactComponent.componentDidMount(), 0)
-    } else {
-      setTimeout(() => this.reactComponent.componentDidUpdate(oldProps, oldState), 0);
+    if (this.mounted) {
+      requestAnimationFrame(() => this.reactComponent.componentDidUpdate(oldProps, oldState));
     }
 
     this.reactComponent.state = {
@@ -60,6 +57,13 @@ export default class ReactNode extends StatefulNode {
     };
 
     super.update(newProps);
+
+    if (!this.mounted) {
+      this.mounted = true;
+
+      // TODO: This needs to be run synchronously... but how are we going to do that?
+      requestAnimationFrame(() => this.reactComponent.componentDidMount());
+    }
   }
 
   render() {
