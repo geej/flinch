@@ -23,7 +23,7 @@ export default class Core {
         const Klass = type.getClass(tag);
         const fullProps = {
           ...Util.cleanProps(props),
-          children: children && children.length !== 0 ? children : (props && props.children)
+          children: Util.getFlatChildren(children).length !== 0 ? children : (props && props.children)
         };
 
         const instance = new Klass(fullProps);
