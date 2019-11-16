@@ -1,5 +1,8 @@
 import { StatefulNode } from '@flinch/core';
 
+// This is a bad idea
+const events = [];
+
 export default class ReactNode extends StatefulNode {
   mounted = false;
 
@@ -45,10 +48,16 @@ export default class ReactNode extends StatefulNode {
     // componentDidUpdate will fire after this draw cycle is complete, so it's okay to store the
     // timeout now. This also ensures that CDU will fire before CDM of the children, which is
     // consistent with React's behavior.
+
+    // Parent CDM needs to occur before child is mounted, which means
     const oldProps = this.props;
     const oldState = this.reactComponent.state;
-    if (this.mounted) {
-      requestAnimationFrame(() => this.reactComponent.componentDidUpdate(oldProps, oldState));
+
+    if (this._mounted) {
+      events.push(() => this.reactComponent.componentDidUpdate(oldProps, oldState));
+    } else {
+      this._mounted = true;
+      events.push(() => this.reactComponent.componentDidMount());
     }
 
     this.reactComponent.state = {
@@ -57,13 +66,21 @@ export default class ReactNode extends StatefulNode {
     };
 
     super.update(newProps);
+  }
 
-    if (!this.mounted) {
-      this.mounted = true;
+  forceUpdate() {
+    const node = super.forceUpdate();
 
-      // TODO: This needs to be run synchronously... but how are we going to do that?
-      requestAnimationFrame(() => this.reactComponent.componentDidMount());
-    }
+    // Flush the event queue
+    // This *ruins* performance, so we should probably do requestanimationframe here
+    // BUT that causes some view thrashing because CDM needs to be synchronous
+
+    requestAnimationFrame(() => {
+      let event;
+      while(event = events.shift()) event();
+    });
+
+    return node;
   }
 
   render() {

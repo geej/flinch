@@ -1,11 +1,19 @@
 import Util from './util';
 
 export default class Node {
+  updateChildren(oldChild, newChild) {
+    if (Array.isArray(newChild)) {
+      return newChild.map((child, index) => this.updateChildren(oldChild[index], child));
+    } else {
+      return Util.updateNode(this, oldChild, newChild);
+    }
+  }
+
   update(props = this.props) {
     const { ref, ...otherProps } = props;
     this._ref = ref;
     this.props = otherProps;
-    this.childNode = Util.updateNode(this, this.childNode, this.render());
+    this.childNode = this.updateChildren(this.childNode, this.render());
   }
 
   forceUpdate() {
@@ -20,7 +28,7 @@ export default class Node {
   }
 
   unmount() {
-    this.childNode.unmount();
+    Util.getFlatChildren(this.childNode).forEach(child => child && child.unmount && child.unmount());
   }
 
   render() {

@@ -1,7 +1,10 @@
 import {ForkNode, Util} from '@flinch/core';
 
+const EVENT_REGEX = /^on([a-zA-Z]+)$/;
+
 export default class DOMNode extends ForkNode {
-  _eventListeners = [];
+  _eventListeners = {};
+
   getTag() { throw new Error('getTag must be extended'); }
 
   draw() {
@@ -9,23 +12,28 @@ export default class DOMNode extends ForkNode {
 
     let { children, style, className, ...otherProps } = this.props;
 
-    // Unbind old event listeners
-    let listener;
-    while (listener = this._eventListeners.pop()) {
-      tag.removeEventListener(listener.event, listener.handler);
-    }
-
+    const actions = [];
     for (let key in otherProps) {
-      let [, action] = /^on([a-zA-Z]+)$/.exec(key) || [];
+      let [, action] = EVENT_REGEX.exec(key) || [];
 
       if (action) {
         action = action.toLowerCase();
-        this._eventListeners.push({ event: action, handler: otherProps[key] });
-        tag.addEventListener(action, otherProps[key]);
+        actions.push(action);
+
+        if (this._eventListeners[action] !== otherProps[key]) {
+          tag.removeEventListener(action, this._eventListeners[action]);
+          tag.addEventListener(action, otherProps[key]);
+          this._eventListeners[action] = otherProps[key];
+        }
       } else if (otherProps[key] || otherProps[key] === 0) {
         tag.setAttribute(key, otherProps[key]);
       }
     }
+
+    Object.keys(this._eventListeners).filter(key => !actions.includes(key)).forEach((key) => {
+      tag.removeEventListener(key, this._eventListeners[key]);
+      delete this._eventListeners[key];
+    });
 
     if (className) {
       tag.setAttribute("class", className);
@@ -38,7 +46,7 @@ export default class DOMNode extends ForkNode {
           const spinalKey = key.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`);
 
           return `${memo} ${spinalKey}: ${typeof value === 'number' ? `${value}px` : value};`;
-        }, '');
+        }, tag.getAttribute('style'));
       }
 
       tag.setAttribute('style', style);
@@ -46,7 +54,6 @@ export default class DOMNode extends ForkNode {
 
     this._drawChildren(tag);
 
-    tag.node = this;
     this.root = tag;
     this._ref && this._ref(tag);
     return tag;
@@ -61,7 +68,7 @@ export default class DOMNode extends ForkNode {
   }
   _drawChildren(tag) {
     const newNodes = [];
-    Util.getFlatChildren(this.props.children).forEach(child => {
+    Util.getFlatChildren(this.childNode).forEach(child => {
       this._recursiveGetNodes(newNodes, child.draw());
     });
 

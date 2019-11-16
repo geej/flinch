@@ -2,7 +2,7 @@ import Flinch, { ForkNode } from '@flinch/core';
 
 export default class PortalNode extends ForkNode {
   draw() {
-    const node = this.props.children.draw();
+    const node = this.childNode.draw();
     if (!this.mountPoint) {
       this.props.destination.appendChild(node);
     }
@@ -10,6 +10,8 @@ export default class PortalNode extends ForkNode {
   }
 
   unmount() {
+    super.unmount();
+
     if (this.mountPoint) {
       this.props.destination.removeChild(this.mountPoint);
     }
