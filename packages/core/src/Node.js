@@ -1,6 +1,11 @@
 import Util from './util';
 
 export default class Node {
+  // constructor(props) {
+  //   this.props = props;
+  //   this.childNode = this.render();
+  // }
+
   updateChildren(oldChild, newChild) {
     if (Array.isArray(newChild)) {
       return newChild.map((child, index) => this.updateChildren(oldChild[index], child));

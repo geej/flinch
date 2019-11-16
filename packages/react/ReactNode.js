@@ -2,9 +2,9 @@ import { StatefulNode } from '@flinch/core';
 
 // This is a bad idea
 const events = [];
-
+let eventTimeout;
 export default class ReactNode extends StatefulNode {
-  mounted = false;
+  __mounted = false;
 
   handleContextChange(value) {
     this.reactComponent.context = value || {};
@@ -49,15 +49,12 @@ export default class ReactNode extends StatefulNode {
     // timeout now. This also ensures that CDU will fire before CDM of the children, which is
     // consistent with React's behavior.
 
-    // Parent CDM needs to occur before child is mounted, which means
+    // Parent CDM needs to occur before child is mounted, which means... what does this mean?
     const oldProps = this.props;
     const oldState = this.reactComponent.state;
 
-    if (this._mounted) {
+    if (this.__mounted) {
       events.push(() => this.reactComponent.componentDidUpdate(oldProps, oldState));
-    } else {
-      this._mounted = true;
-      events.push(() => this.reactComponent.componentDidMount());
     }
 
     this.reactComponent.state = {
@@ -66,21 +63,19 @@ export default class ReactNode extends StatefulNode {
     };
 
     super.update(newProps);
-  }
 
-  forceUpdate() {
-    const node = super.forceUpdate();
+  if (!this.__mounted) {
+      this.__mounted = true;
+      events.push(() => this.reactComponent.componentDidMount());
+    }
 
-    // Flush the event queue
-    // This *ruins* performance, so we should probably do requestanimationframe here
-    // BUT that causes some view thrashing because CDM needs to be synchronous
-
-    requestAnimationFrame(() => {
-      let event;
-      while(event = events.shift()) event();
-    });
-
-    return node;
+    if (!eventTimeout) {
+      eventTimeout = requestAnimationFrame(() => {
+        let event;
+        while(event = events.shift()) event();
+        eventTimeout = null;
+      });
+    }
   }
 
   render() {
