@@ -1,5 +1,8 @@
 import { StatefulNode } from '@flinch/core';
 
+// This is a bad idea
+const events = [];
+
 export default class ReactNode extends StatefulNode {
   mounted = false;
 
@@ -47,8 +50,9 @@ export default class ReactNode extends StatefulNode {
     // consistent with React's behavior.
     const oldProps = this.props;
     const oldState = this.reactComponent.state;
+
     if (this.mounted) {
-      requestAnimationFrame(() => this.reactComponent.componentDidUpdate(oldProps, oldState));
+      events.push(() => this.reactComponent.componentDidUpdate(oldProps, oldState));
     }
 
     this.reactComponent.state = {
@@ -60,10 +64,20 @@ export default class ReactNode extends StatefulNode {
 
     if (!this.mounted) {
       this.mounted = true;
-
-      // TODO: This needs to be run synchronously... but how are we going to do that?
-      requestAnimationFrame(() => this.reactComponent.componentDidMount());
+      events.push(() => this.reactComponent.componentDidMount());
     }
+  }
+
+  forceUpdate() {
+    const node = super.forceUpdate();
+
+    // Flush the event queue
+    // This *ruins* performance, so we should probably do requestanimationframe here
+    // BUT that causes some view thrashing because CDM needs to be synchronous
+    let event;
+    while(event = events.shift()) event();
+
+    return node;
   }
 
   render() {
