@@ -4,7 +4,6 @@ const EVENT_REGEX = /^on([a-zA-Z]+)$/;
 
 export default class DOMNode extends ForkNode {
   _eventListeners = {};
-  _style = '';
 
   getTag() { throw new Error('getTag must be extended'); }
 
@@ -47,10 +46,9 @@ export default class DOMNode extends ForkNode {
           const spinalKey = key.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`);
 
           return `${memo} ${spinalKey}: ${typeof value === 'number' ? `${value}px` : value};`;
-        }, (tag.getAttribute('style') || '').replace(this._style, ''));
+        }, tag.getAttribute('style'));
       }
 
-      this._style = style;
       tag.setAttribute('style', style);
     }
 
