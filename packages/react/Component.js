@@ -36,9 +36,11 @@ export default class Component {
   }
 
   setState(state, callback = () => {}) {
-    const newState = typeof state === 'function' ? state(this.state) : state;
-    this.state = { ...this.state, ...newState };
-    this.forceUpdate(() => callback(this.state));
+    requestAnimationFrame(() => {
+      const newState = typeof state === 'function' ? state(this.state) : state;
+      this.state = { ...this.state, ...newState };
+      this.forceUpdate(() => callback(this.state));
+    });
   }
 }
 

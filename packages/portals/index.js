@@ -10,6 +10,8 @@ export default class PortalNode extends ForkNode {
   }
 
   unmount() {
+    super.unmount();
+
     if (this.mountPoint) {
       this.props.destination.removeChild(this.mountPoint);
     }
