@@ -68,7 +68,7 @@ export default class DOMNode extends ForkNode {
   }
   _drawChildren(tag) {
     const newNodes = [];
-    Util.getFlatChildren(this.props.children).forEach(child => {
+    Util.getFlatChildren(this.childNode).forEach(child => {
       this._recursiveGetNodes(newNodes, child.draw());
     });
 
