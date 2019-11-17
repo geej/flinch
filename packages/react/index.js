@@ -1,8 +1,7 @@
 import { render } from '@flinch/dom';
 import { createContext } from '@flinch/context';
 import PortalNode from '@flinch/portals';
-import Flinch, { Node } from '@flinch/core';
-import Fragment from '@flinch/fragment';
+import Flinch, { Node, Fragment } from '@flinch/core';
 import '@flinch/props-defaults';
 import Component from './Component';
 import Children from './Children';

@@ -1,15 +1,11 @@
-import {Node, Util} from '@flinch/core';
+import {Fragment, Util} from '@flinch/core';
 
 const EVENT_REGEX = /^on([a-zA-Z]+)$/;
 
-export default class DOMNode extends Node {
+export default class DOMNode extends Fragment {
   _eventListeners = {};
 
   getTag() { throw new Error('getTag must be extended'); }
-
-  render() {
-    return this.props.children;
-  }
 
   draw() {
     const tag = this.root || this.getTag(this.component);

@@ -1,4 +1,5 @@
 import Primitive from '../Primitive';
+import Fragment from '../Fragment';
 
 const Util = {
   getFlatChildren: function(children) {
@@ -31,12 +32,9 @@ const Util = {
 
     if (!oldNode || oldNode.component !== newNode.component || oldNode.props.key !== newNode.props.key) {
       oldNode && oldNode.unmount && oldNode.unmount();
-
-      // This is a dumb way to do this. Find a better way.
-      // if (newNode.childNode === newNode.props.children) {
-      //   newNode = Util.cloneNode(newNode);
-      // }
-
+      if (newNode instanceof Fragment) {
+        newNode = Util.cloneNode(newNode);
+      }
       node = newNode;
     }
 
