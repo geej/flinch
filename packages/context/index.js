@@ -1,4 +1,4 @@
-import { StatefulNode } from '@flinch/core';
+import { StatefulNode, Util } from '@flinch/core';
 import '@flinch/props-defaults';
 import effect from '@flinch/effect';
 
@@ -23,11 +23,7 @@ export function createContext(value) {
 
   // This is poorly named
   function findProvider(child) {
-    let node = child.parent;
-    while (node && !(node instanceof Provider)) {
-      node = node.parent;
-    }
-
+    const node = Util.findClosestAncestorWhere(child.parent, node => node instanceof Provider);
     return node && node.registerCallback(child.handleContextChange);
   }
 

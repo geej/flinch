@@ -24,12 +24,8 @@ export default class Node {
   forceUpdate() {
     this.update();
 
-    // Redraw from closest mounted ancestor
-    let cursor = this;
-    while (cursor.parent && !cursor.root) {
-      cursor = cursor.parent;
-    }
-    return cursor.draw();
+    const node = Util.findClosestAncestorWhere(this, node => !node.parent || node.root);
+    return node.draw();
   }
 
   unmount() {

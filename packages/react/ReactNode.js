@@ -1,4 +1,4 @@
-import { StatefulNode } from '@flinch/core';
+import { StatefulNode, Util } from '@flinch/core';
 
 const events = [];
 let eventTimeout;
@@ -12,12 +12,8 @@ export default class ReactNode extends StatefulNode {
   }
 
   getLegacyContext() {
-    let cursor = this.parent;
-    while (cursor && !(cursor.reactComponent && cursor.reactComponent.getChildContext)) {
-      cursor = cursor.parent;
-    }
-
-    return cursor && cursor.reactComponent.getChildContext() || {};
+    const node = Util.findClosestAncestorWhere(this.parent, node => node.reactComponent && node.reactComponent.getChildContext);
+    return node && node.reactComponent.getChildContext() || {};
   }
 
   get key() {

@@ -55,7 +55,14 @@ const Util = {
       return memo;
     }, {});
   },
-  cloneNode: element => Object.assign(Object.create(Object.getPrototypeOf(element)), element)
+  cloneNode: element => Object.assign(Object.create(Object.getPrototypeOf(element)), element),
+  findClosestAncestorWhere: (node, fn) => {
+    let cursor = node;
+    while (cursor && !fn(cursor)) {
+      cursor = cursor.parent;
+    }
+    return cursor;
+  },
 };
 
 export default Util;
