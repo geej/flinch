@@ -26,12 +26,7 @@ export default class Core {
           children: Util.getFlatChildren(children).length !== 0 ? children : (props && props.children)
         };
 
-        const instance = new Klass(fullProps);
-
-        instance.props = fullProps;
-        instance.component = tag;
-
-        return instance;
+        return new Klass(tag, fullProps);
       }
     }
   }

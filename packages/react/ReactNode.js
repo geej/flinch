@@ -1,8 +1,8 @@
 import { StatefulNode } from '@flinch/core';
 
-// This is a bad idea
 const events = [];
 let eventTimeout;
+
 export default class ReactNode extends StatefulNode {
   __mounted = false;
 
@@ -64,7 +64,7 @@ export default class ReactNode extends StatefulNode {
 
     super.update(newProps);
 
-  if (!this.__mounted) {
+    if (!this.__mounted) {
       this.__mounted = true;
       events.push(() => this.reactComponent.componentDidMount());
     }

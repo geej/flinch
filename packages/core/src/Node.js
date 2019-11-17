@@ -1,10 +1,10 @@
 import Util from './util';
 
 export default class Node {
-  // constructor(props) {
-  //   this.props = props;
-  //   this.childNode = this.render();
-  // }
+  constructor(component, props) {
+    this.props = props;
+    this.component = component;
+  }
 
   updateChildren(oldChild, newChild) {
     if (Array.isArray(newChild)) {
