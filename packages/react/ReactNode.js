@@ -12,8 +12,11 @@ export default class ReactNode extends StatefulNode {
   }
 
   getLegacyContext() {
-    const node = Util.findClosestAncestorWhere(this.parent, node => node.reactComponent && node.reactComponent.getChildContext);
-    return node && node.reactComponent.getChildContext() || {};
+    const node = Util.findClosestAncestorWhere(
+      this.parent,
+      node => node.reactComponent && node.reactComponent.getChildContext
+    );
+    return (node && node.reactComponent.getChildContext()) || {};
   }
 
   get key() {
@@ -68,7 +71,7 @@ export default class ReactNode extends StatefulNode {
     if (!eventTimeout) {
       eventTimeout = requestAnimationFrame(() => {
         let event;
-        while(event = events.shift()) event();
+        while ((event = events.shift())) event();
         eventTimeout = null;
       });
     }

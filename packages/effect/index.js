@@ -8,7 +8,7 @@ export default function effect(...keys) {
 
       const update = target.update;
 
-      target.update = function (newProps) {
+      target.update = function(newProps) {
         const changedProps = (newProps &&
           Object.keys(this.props)
             .concat(Object.keys(newProps))
@@ -34,7 +34,7 @@ export default function effect(...keys) {
         if (!eventTimeout) {
           eventTimeout = requestAnimationFrame(() => {
             let event;
-            while(event = events.shift()) event();
+            while ((event = events.shift())) event();
             eventTimeout = null;
           });
         }

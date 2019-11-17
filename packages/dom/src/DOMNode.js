@@ -1,6 +1,7 @@
 import {Fragment, Util} from '@flinch/core';
 
 const EVENT_REGEX = /^on([a-zA-Z]+)$/;
+const REQUIRES_UNIT_REGEX = /(top|bottom|left|right|width|height)$/i;
 
 export default class DOMNode extends Fragment {
   _eventListeners = {};
@@ -36,20 +37,23 @@ export default class DOMNode extends Fragment {
     });
 
     if (className) {
-      tag.setAttribute("class", className);
+      tag.setAttribute('class', className);
     }
 
     if (style) {
-      if (typeof style !== 'string') {
-        style = Object.keys(style).reduce((memo, key) => {
-          const value = style[key];
-          const spinalKey = key.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`);
-
-          return `${memo} ${spinalKey}: ${typeof value === 'number' ? `${value}px` : value};`;
-        }, tag.getAttribute('style'));
+      if (this._styleKeys) {
+        this._styleKeys.forEach(key => delete tag.style[key])
       }
 
-      tag.setAttribute('style', style);
+      Object.keys(style).forEach(key => {
+        let value = style[key];
+        if (REQUIRES_UNIT_REGEX.test(key) && typeof value === 'number') {
+          value = `${value}px`;
+        }
+        tag.style[key] = value;
+      });
+
+      this._styleKeys = Object.keys(style);
     }
 
     this._drawChildren(tag);
@@ -66,6 +70,7 @@ export default class DOMNode extends Fragment {
       array.push(node);
     }
   }
+
   _drawChildren(tag) {
     const newNodes = [];
     Util.getFlatChildren(this.childNode).forEach(child => {
