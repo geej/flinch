@@ -1,5 +1,5 @@
 {
-  "name": "@flinch/portals",
+  "name": "@flinch/portal",
   "version": "0.0.1",
   "description": "Portals for Flinch",
   "main": "index.js",

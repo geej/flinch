@@ -10,7 +10,7 @@
     "@flinch/dom": "0.0.1",
     "@flinch/effect": "0.0.1",
     "@flinch/context": "0.0.1",
-    "@flinch/portals": "0.0.1",
+    "@flinch/portal": "0.0.1",
     "@flinch/props-defaults": "0.0.1"
   }
 }

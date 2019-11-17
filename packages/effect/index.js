@@ -1,3 +1,6 @@
+const events = [];
+let eventTimeout;
+
 export default function effect(...keys) {
   return function(target, name, descriptor) {
     if (!target._lifecycleCallbacks) {
@@ -19,12 +22,20 @@ export default function effect(...keys) {
         const result = update.apply(this, [newProps]);
         if (!this._mounted) {
           this._mounted = true;
-          setTimeout(() => target._lifecycleCallbacks.map(cb => cb.callback.apply(this)), 0);
+          events.push(() => target._lifecycleCallbacks.map(cb => cb.callback.apply(this)));
         } else {
           target._lifecycleCallbacks.forEach(cb => {
             if (cb.keys.filter(prop => Array.from(changedProps).includes(prop)).length) {
-              setTimeout(() => cb.callback.apply(this), 0);
+              events.push(() => cb.callback.apply(this));
             }
+          });
+        }
+
+        if (!eventTimeout) {
+          eventTimeout = requestAnimationFrame(() => {
+            let event;
+            while(event = events.shift()) event();
+            eventTimeout = null;
           });
         }
 
