@@ -1,5 +1,5 @@
-import ForkNode from '../ForkNode';
 import Primitive from '../Primitive';
+import Fragment from '../Fragment';
 
 const Util = {
   getFlatChildren: function(children) {
@@ -18,11 +18,6 @@ const Util = {
     );
   },
   updateNode: (context, oldNode, newNode) => {
-    // Need to shallow clone all forknodes here on the off chance that a node is rendered in two places.
-    if (oldNode instanceof ForkNode) {
-      oldNode = Util.cloneNode(oldNode);
-    }
-
     if (newNode !== Object(newNode)) {
       if (oldNode instanceof Primitive) {
         oldNode.update(newNode);
@@ -37,6 +32,9 @@ const Util = {
 
     if (!oldNode || oldNode.component !== newNode.component || oldNode.props.key !== newNode.props.key) {
       oldNode && oldNode.unmount && oldNode.unmount();
+      if (newNode instanceof Fragment) {
+        newNode = Util.cloneNode(newNode);
+      }
       node = newNode;
     }
 

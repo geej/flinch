@@ -1,8 +1,8 @@
-import {ForkNode, Util} from '@flinch/core';
+import {Fragment, Util} from '@flinch/core';
 
 const EVENT_REGEX = /^on([a-zA-Z]+)$/;
 
-export default class DOMNode extends ForkNode {
+export default class DOMNode extends Fragment {
   _eventListeners = {};
 
   getTag() { throw new Error('getTag must be extended'); }

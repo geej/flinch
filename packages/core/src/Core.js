@@ -1,5 +1,6 @@
 import FunctionalNode from './FunctionalNode';
 import StatefulNode from './StatefulNode';
+import Fragment from './Fragment';
 import Util from './util';
 
 export default class Core {
@@ -12,6 +13,10 @@ export default class Core {
       check: component =>
         typeof component === "function" && Object.getPrototypeOf(component) === Object.getPrototypeOf(function() {}),
       getClass: () => FunctionalNode
+    },
+    {
+      check: klass => klass === Fragment,
+      getClass: () => Fragment
     }
   ];
 

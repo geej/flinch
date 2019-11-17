@@ -1,6 +1,6 @@
-import Flinch, { ForkNode } from '@flinch/core';
+import Flinch, { Fragment } from '@flinch/core';
 
-export default class PortalNode extends ForkNode {
+export default class PortalNode extends Fragment {
   draw() {
     const node = this.childNode.draw();
     if (!this.mountPoint) {
