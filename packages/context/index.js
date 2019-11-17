@@ -1,7 +1,6 @@
-import Flinch, { StatefulNode } from '@flinch/core';
+import { StatefulNode } from '@flinch/core';
 import '@flinch/props-defaults';
 import effect from '@flinch/effect';
-import {Util} from '@flinch/core';
 
 export function createContext(value) {
   class Provider extends StatefulNode {
@@ -19,10 +18,6 @@ export function createContext(value) {
 
     render() {
       return this.props.children;
-    }
-
-    draw() {
-      return Util.getFlatChildren(this.childNode).map(child => child.draw());
     }
   }
 
