@@ -1,6 +1,7 @@
 import Flinch, { StatefulNode } from '@flinch/core';
 import '@flinch/props-defaults';
 import effect from '@flinch/effect';
+import {Util} from '@flinch/core';
 
 export function createContext(value) {
   class Provider extends StatefulNode {
@@ -17,7 +18,11 @@ export function createContext(value) {
     }
 
     render() {
-      return Flinch.create('div', undefined, this.props.children);
+      return this.props.children;
+    }
+
+    draw() {
+      return Util.getFlatChildren(this.childNode).map(child => child.draw());
     }
   }
 
@@ -29,7 +34,7 @@ export function createContext(value) {
     }
 
     return node && node.registerCallback(child.handleContextChange);
-  };
+  }
 
   class Consumer extends StatefulNode {
     state = { value };

@@ -8,7 +8,7 @@ export default class Node {
 
   updateChildren(oldChild, newChild) {
     if (Array.isArray(newChild)) {
-      return newChild.map((child, index) => this.updateChildren(oldChild[index], child));
+      return newChild.map((child, index) => this.updateChildren(oldChild && oldChild[index], child));
     } else {
       return Util.updateNode(this, oldChild, newChild);
     }
@@ -41,7 +41,7 @@ export default class Node {
   }
 
   draw() {
-    const node = this.childNode.draw();
+    const node = Util.getFlatChildren(this.childNode).map(child => child.draw());
     this._ref && this._ref(this.getRef());
     return node;
   }

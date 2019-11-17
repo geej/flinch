@@ -1,8 +1,8 @@
-import Flinch, { ForkNode, Util } from '@flinch/core';
+import Flinch, { Node } from '@flinch/core';
 
-export default class Fragment extends ForkNode {
-  draw() {
-    return Util.getFlatChildren(this.childNode).map(child => child.draw());
+export default class Fragment extends Node {
+  render() {
+    return this.props.children;
   }
 }
 
