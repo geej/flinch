@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist --nohoist @material-ui/core --nohoist @material-ui/icons",
-    "prettier": "prettier packages/**/*.js --write"
+    "prettier": "prettier --write '**/*.js'"
   },
   "repository": {
     "type": "git",

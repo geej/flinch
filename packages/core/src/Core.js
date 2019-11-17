@@ -11,7 +11,7 @@ export default class Core {
     },
     {
       check: component =>
-        typeof component === "function" && Object.getPrototypeOf(component) === Object.getPrototypeOf(function() {}),
+        typeof component === 'function' && Object.getPrototypeOf(component) === Object.getPrototypeOf(function() {}),
       getClass: () => FunctionalNode
     },
     {
@@ -28,7 +28,7 @@ export default class Core {
         const Klass = type.getClass(tag);
         const fullProps = {
           ...Util.cleanProps(props),
-          children: Util.getFlatChildren(children).length !== 0 ? children : (props && props.children)
+          children: Util.getFlatChildren(children).length !== 0 ? children : props && props.children
         };
 
         return new Klass(tag, fullProps);

@@ -1,4 +1,4 @@
-import {Fragment, Util} from '@flinch/core';
+import { Fragment, Util } from '@flinch/core';
 
 const EVENT_REGEX = /^on([a-zA-Z]+)$/;
 const REQUIRES_UNIT_REGEX = /(top|bottom|left|right|width|height)$/i;
@@ -6,7 +6,9 @@ const REQUIRES_UNIT_REGEX = /(top|bottom|left|right|width|height)$/i;
 export default class DOMNode extends Fragment {
   _eventListeners = {};
 
-  getTag() { throw new Error('getTag must be extended'); }
+  getTag() {
+    throw new Error('getTag must be extended');
+  }
 
   draw() {
     const tag = this.root || this.getTag(this.component);
@@ -31,10 +33,12 @@ export default class DOMNode extends Fragment {
       }
     }
 
-    Object.keys(this._eventListeners).filter(key => !actions.includes(key)).forEach((key) => {
-      tag.removeEventListener(key, this._eventListeners[key]);
-      delete this._eventListeners[key];
-    });
+    Object.keys(this._eventListeners)
+      .filter(key => !actions.includes(key))
+      .forEach(key => {
+        tag.removeEventListener(key, this._eventListeners[key]);
+        delete this._eventListeners[key];
+      });
 
     if (className) {
       tag.setAttribute('class', className);
@@ -42,7 +46,7 @@ export default class DOMNode extends Fragment {
 
     if (style) {
       if (this._styleKeys) {
-        this._styleKeys.forEach(key => delete tag.style[key])
+        this._styleKeys.forEach(key => delete tag.style[key]);
       }
 
       Object.keys(style).forEach(key => {

@@ -8,12 +8,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = theme => ({
   root: {
-    width: '100%',
+    width: '100%'
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
+    fontWeight: theme.typography.fontWeightRegular
+  }
 });
 
 function SimpleExpansionPanel(props) {
@@ -26,8 +26,8 @@ function SimpleExpansionPanel(props) {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-            sit amet blandit leo lobortis eget.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit
+            leo lobortis eget.
           </Typography>
         </ExpansionPanelDetails>
       </ExpansionPanel>
@@ -37,8 +37,8 @@ function SimpleExpansionPanel(props) {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-            sit amet blandit leo lobortis eget.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit
+            leo lobortis eget.
           </Typography>
         </ExpansionPanelDetails>
       </ExpansionPanel>

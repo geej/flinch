@@ -33,7 +33,7 @@ export default class Node {
   }
 
   render() {
-    throw new Error("render must be defined by a child class!");
+    throw new Error('render must be defined by a child class!');
   }
 
   draw() {

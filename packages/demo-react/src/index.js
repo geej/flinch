@@ -34,7 +34,7 @@ function ButtonAppBar(props) {
 
 class Portal extends React.Component {
   render() {
-    return ReactDOM.createPortal(<div>{ this.props.children }</div>, document.getElementById('portal'));
+    return ReactDOM.createPortal(<div>{this.props.children}</div>, document.getElementById('portal'));
   }
 }
 
@@ -46,26 +46,17 @@ ReactDOM.render(
     <App />
     <React.Fragment>
       hello there
-      <div>
-        how
-      </div>
-      <div>
-        are
-      </div>
-      <div>
-        you
-      </div>
-      ?
+      <div>how</div>
+      <div>are</div>
+      <div>you</div>?
     </React.Fragment>
     <div>
       <div>
-        <div>
-          simple nested div
-        </div>
+        <div>simple nested div</div>
       </div>
     </div>
-    <SimpleExpansionPanel/>
+    <SimpleExpansionPanel />
     <Portal>hi</Portal>
   </div>,
-  document.getElementById("root")
+  document.getElementById('root')
 );

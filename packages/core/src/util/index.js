@@ -6,14 +6,11 @@ const Util = {
     if (!children && children !== 0) return [];
 
     if (!Array.isArray(children)) {
-      children = [ children ];
+      children = [children];
     }
 
     return children.reduce(
-      (memo, value) =>
-        Array.isArray(value)
-          ? [...memo, ...Util.getFlatChildren(value)]
-          : [...memo, value],
+      (memo, value) => (Array.isArray(value) ? [...memo, ...Util.getFlatChildren(value)] : [...memo, value]),
       []
     );
   },
@@ -62,7 +59,7 @@ const Util = {
       cursor = cursor.parent;
     }
     return cursor;
-  },
+  }
 };
 
 export default Util;

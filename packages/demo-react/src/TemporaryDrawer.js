@@ -12,18 +12,18 @@ import MailIcon from '@material-ui/icons/Mail';
 
 const styles = {
   list: {
-    width: 250,
+    width: 250
   }
 };
 
 class TemporaryDrawer extends React.Component {
   state = {
-    left: false,
+    left: false
   };
 
   toggleDrawer = (side, open) => () => {
     this.setState({
-      left: open,
+      left: open
     });
   };
 
@@ -54,8 +54,10 @@ class TemporaryDrawer extends React.Component {
 
     return (
       <div>
-        { sideList }
-        <button variant="contained" onClick={this.toggleDrawer('left', true)}>Open Left</button>
+        {sideList}
+        <button variant="contained" onClick={this.toggleDrawer('left', true)}>
+          Open Left
+        </button>
         <Drawer open={this.state.left} onClose={this.toggleDrawer('left', false)}>
           <div
             tabIndex={0}
