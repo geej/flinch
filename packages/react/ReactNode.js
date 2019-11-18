@@ -8,7 +8,7 @@ export default class ReactNode extends StatefulNode {
 
   handleContextChange(value) {
     this.reactComponent.context = value || {};
-    this.reactComponent.forceUpdate();
+    this.forceUpdate();
   }
 
   getLegacyContext() {
@@ -40,6 +40,7 @@ export default class ReactNode extends StatefulNode {
       }
 
       this.reactComponent = new this.component(this.props, context || {});
+      this.state = this.reactComponent._tempState;
       this.reactComponent.flinchNode = this;
     }
     this.reactComponent.context = context;
@@ -50,15 +51,15 @@ export default class ReactNode extends StatefulNode {
 
     // Parent CDM needs to occur before child is mounted, which means... what does this mean?
     const oldProps = this.props;
-    const oldState = this.reactComponent.state;
+    const oldState = this.state;
 
     if (this.__mounted) {
       events.push(() => this.reactComponent.componentDidUpdate(oldProps, oldState));
     }
 
-    this.reactComponent.state = {
-      ...this.reactComponent.state,
-      ...this.component.getDerivedStateFromProps(newProps || {}, this.reactComponent.state)
+    this.state = {
+      ...this.state,
+      ...this.component.getDerivedStateFromProps(newProps || {}, this.state)
     };
 
     super.update(newProps);
