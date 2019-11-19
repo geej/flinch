@@ -4,12 +4,8 @@ export default class HookNode extends StatefulNode {
   _refs = {};
 
   render() {
-    return this.component(this.props);
-  }
-
-  update() {
     Hooks.setUpdateContext(this);
-    super.update();
+    return this.component(this.props);
   }
 
   unmount() {

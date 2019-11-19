@@ -18,7 +18,7 @@ FunctionalComponent.defaultProps = { counter: 99 };
 class StatefulComponent2 extends StatefulNode {
   @observable clicked = 0;
 
-  @effect('counter') helloThere() {
+  @effect((props) => [ props.counter ]) helloThere() {
     console.log('Counter changed! Value: ', this.props.counter);
   }
 
@@ -41,7 +41,7 @@ class StatefulComponent3 extends StatefulNode {
           console.log(this.state.clicked + 1);
           this.setState({ clicked: this.state.clicked + 1 });
         }}
-        style={this.state.clicked > 0 && 'background-color: red; '}
+        style={this.state.clicked > 0 && { backgroundColor: 'red' }}
       >
         {this.state.clicked}
       </div>

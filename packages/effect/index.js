@@ -1,50 +1,47 @@
+import { Node } from '@flinch/core';
+
 const events = [];
 let eventTimeout;
 
-export default function effect(...keys) {
-  return function(target, name, descriptor) {
-    if (!target._lifecycleCallbacks) {
-      target._lifecycleCallbacks = [];
+function decorate(valueFn, target, name, descriptor) {
+  if (!target._effects) {
+    target._effects = [];
 
-      const update = target.update;
+    const update = target.update;
 
-      target.update = function(newProps) {
-        const changedProps = (newProps &&
-          Object.keys(this.props)
-            .concat(Object.keys(newProps))
-            .reduce((memo, key) => {
-              if (newProps[key] !== this.props[key]) {
-                memo.add(key);
-              }
-              return memo;
-            }, new Set(['$all']))) || ['$all'];
+    target.update = function(newProps) {
+      const result = update.apply(this, [newProps]);
 
-        const result = update.apply(this, [newProps]);
-        if (!this._mounted) {
-          this._mounted = true;
-          events.push(() => target._lifecycleCallbacks.map(cb => cb.callback.apply(this)));
-        } else {
-          target._lifecycleCallbacks.forEach(cb => {
-            if (cb.keys.filter(prop => Array.from(changedProps).includes(prop)).length) {
-              events.push(() => cb.callback.apply(this));
-            }
-          });
+      target._effects.forEach(effect => {
+        const newValues = effect.valueFn && effect.valueFn(this.props, this.state, this);
+        if (!effect.lastValues || effect.lastValues.some((value, index) => value !== newValues[index])) {
+          events.push(() => effect.callback.apply(this));
         }
 
-        if (!eventTimeout) {
-          eventTimeout = requestAnimationFrame(() => {
-            let event;
-            while ((event = events.shift())) event();
-            eventTimeout = null;
-          });
-        }
+        effect.lastValues = newValues;
+      });
 
-        return result;
-      };
-    }
+      if (!eventTimeout) {
+        eventTimeout = requestAnimationFrame(() => {
+          let event;
+          while ((event = events.shift())) event();
+          eventTimeout = null;
+        });
+      }
 
-    target._lifecycleCallbacks.push({ keys, callback: target[name] });
+      return result;
+    };
+  }
 
-    return descriptor;
-  };
+  target._effects.push({ valueFn, lastValues: undefined, callback: target[name] });
+
+  return descriptor;
+}
+
+export default function effect(...args) {
+  if (args[0] && args[0] instanceof Node) {
+    return decorate(null, ...args);
+  } else {
+    return (target, name, descriptor) => decorate(args[0] || (() => [ true ]), target, name, descriptor);
+  }
 }
