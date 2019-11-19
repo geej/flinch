@@ -3,11 +3,9 @@
   "version": "0.0.2",
   "description": "MobX decorators for Flinch",
   "main": "dist/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "geej",
   "license": "MIT",
+  "repository": "https://github.com/geej/flinch/tree/master/packages/mobx",
   "dependencies": {
     "@flinch/core": "^0.0.2",
     "@flinch/effect": "^0.0.2",

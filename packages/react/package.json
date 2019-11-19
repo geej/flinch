@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "author": "geej",
   "license": "MIT",
+  "repository": "https://github.com/geej/flinch/tree/master/packages/react",
   "dependencies": {
     "@flinch/context": "^0.0.2",
     "@flinch/core": "^0.0.2",
