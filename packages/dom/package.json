@@ -6,6 +6,6 @@
   "author": "geej",
   "license": "MIT",
   "dependencies": {
-    "@flinch/core": "0.0.1"
+    "@flinch/core": "^0.0.1"
   }
 }
