@@ -1,11 +1,11 @@
 {
   "name": "@flinch/props-defaults",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "defaultProps for Flinch",
   "main": "dist/index.js",
   "author": "geej",
   "license": "MIT",
   "dependencies": {
-    "@flinch/core": "^0.0.1"
+    "@flinch/core": "^0.0.2"
   }
 }
