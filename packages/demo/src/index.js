@@ -18,7 +18,7 @@ FunctionalComponent.defaultProps = { counter: 99 };
 class StatefulComponent2 extends StatefulNode {
   @observable clicked = 0;
 
-  @effect((props) => [ props.counter ]) helloThere() {
+  @effect(props => [props.counter]) helloThere() {
     console.log('Counter changed! Value: ', this.props.counter);
   }
 

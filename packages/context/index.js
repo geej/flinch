@@ -12,7 +12,7 @@ export function createContext(value) {
       return this.props.value;
     }
 
-    @effect(props => [ props.value ]) pushContext() {
+    @effect(props => [props.value]) pushContext() {
       this.callbacks.forEach(cb => cb(this.props.value));
     }
 

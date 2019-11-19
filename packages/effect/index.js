@@ -22,7 +22,11 @@ function decorate(valueFn, target, name, descriptor) {
 
     target.update = function(newProps) {
       // Component did update
-      forEachEffectPushIf(this, target, (lastValues, newValues) => lastValues && lastValues.some((value, index) => value !== newValues[index]));
+      forEachEffectPushIf(
+        this,
+        target,
+        (lastValues, newValues) => lastValues && lastValues.some((value, index) => value !== newValues[index])
+      );
 
       const result = update.apply(this, [newProps]);
 
@@ -50,6 +54,6 @@ export default function effect(...args) {
   if (args[0] && args[0] instanceof Node) {
     return decorate(null, ...args);
   } else {
-    return (target, name, descriptor) => decorate(args[0] || (() => [ true ]), target, name, descriptor);
+    return (target, name, descriptor) => decorate(args[0] || (() => [true]), target, name, descriptor);
   }
 }

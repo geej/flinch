@@ -1,3 +1,5 @@
+import { StatefulNode } from '@flinch/core';
+
 export default class HookNode extends StatefulNode {
   _effects = {};
   _memos = {};
@@ -24,10 +26,10 @@ const Hooks = {
   },
   getNextHook: () => {
     this.hookCursor += 1;
-    return [ this.context, this.hookCursor ];
+    return [this.context, this.hookCursor];
   },
-  useState: (defaultValue) => {
-    const [ hookContext, hookNumber ] = this.getNextHook();
+  useState: defaultValue => {
+    const [hookContext, hookNumber] = this.getNextHook();
 
     const setValue = value => {
       hookContext.setState({
@@ -35,19 +37,17 @@ const Hooks = {
       });
     };
 
-    return [ hookContext.state[hookNumber] || defaultValue, setValue ];
+    return [hookContext.state[hookNumber] || defaultValue, setValue];
   },
   useEffect: (effectFn, firesOn) => {
-    const [ hookContext, hookNumber ] = this.getNextHook();
+    const [hookContext, hookNumber] = this.getNextHook();
 
     if (
       !hookContext._effects[hookNumber] ||
       !firesOn ||
-      (
-        firesOn &&
+      (firesOn &&
         hookContext._effects[hookNumber].firesOn &&
-        firesOn.some((value, index) => value !== hookContext._effects[hookNumber].firesOn[index])
-      )
+        firesOn.some((value, index) => value !== hookContext._effects[hookNumber].firesOn[index]))
     ) {
       requestAnimationFrame(() => {
         hookContext._effects[hookNumber] = hookContext._effects[hookNumber] || {};
@@ -66,7 +66,7 @@ const Hooks = {
     // TODO
   },
   useRef: defaultValue => {
-    const [ hookContext, hookNumber ] = this.getNextHook();
+    const [hookContext, hookNumber] = this.getNextHook();
 
     if (!hookContext._refs[hookNumber]) {
       function setRef(ref) {
@@ -80,20 +80,18 @@ const Hooks = {
     return hookContext._refs[hookNumber];
   },
   useMemo: (fn, changesOn) => {
-    const [ hookContext, hookNumber ] = this.getNextHook();
+    const [hookContext, hookNumber] = this.getNextHook();
 
     if (
       !hookContext._memos[hookNumber] ||
       !changesOn ||
-      (
-        changesOn &&
+      (changesOn &&
         hookContext._memos[hookNumber].changesOn &&
-        changesOn.some((value, index) => value !== hookContext._memos[hookNumber].changesOn[index])
-      )
+        changesOn.some((value, index) => value !== hookContext._memos[hookNumber].changesOn[index]))
     ) {
-        hookContext._memos[hookNumber] = hookContext._memos[hookNumber] || {};
-        hookContext._memos[hookNumber].value = fn();
-        hookContext._memos[hookNumber].changesOn = changesOn;
+      hookContext._memos[hookNumber] = hookContext._memos[hookNumber] || {};
+      hookContext._memos[hookNumber].value = fn();
+      hookContext._memos[hookNumber].changesOn = changesOn;
     }
 
     return hookContext._memos[hookNumber].value;

@@ -38,7 +38,8 @@ export default class Component {
       return this.flinchNode.state;
     } else {
       return this._tempState;
-    }  }
+    }
+  }
 
   get props() {
     return this.flinchNode.props;

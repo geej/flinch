@@ -7,6 +7,10 @@ A modular, extensible JavaScript framework for progressive web apps.
 ## Modules
 * [@flinch/core](packages/core)
 * [@flinch/dom](packages/dom)
-* [@flinch/context](packages/context) (Coming Soon!)
+* [@flinch/context](packages/context)
 * [@flinch/effect](packages/effect)
 * [@flinch/mobx](packages/mobx)
+* [@flinch/portal](packages/portal)
+* [@flinch/props-defaults](packages/props-defaults)
+* [@flinch/react](packages/react)
+* [@flinch/react-hooks](packages/react-hooks)
