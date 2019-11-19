@@ -1,6 +1,6 @@
 import Primitive from '../Primitive';
 import Fragment from '../Fragment';
-
+import Core from '../Core';
 const Util = {
   getFlatChildren: function(children) {
     if (!children && children !== 0) return [];
@@ -21,7 +21,7 @@ const Util = {
         return oldNode;
       } else {
         oldNode && oldNode.unmount && oldNode.unmount();
-        return new Primitive(newNode);
+        return new Core.Primitive(newNode);
       }
     }
 

@@ -8,12 +8,6 @@ export default class Primitive {
   }
 
   draw() {
-    if (this.root) {
-      this.root.nodeValue = this.value;
-    } else {
-      this.root = document.createTextNode(this.value);
-    }
-
-    return this.root;
+    throw new Error('draw() must be implemented by a child class');
   }
 }

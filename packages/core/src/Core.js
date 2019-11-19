@@ -1,9 +1,11 @@
 import FunctionalNode from './FunctionalNode';
 import StatefulNode from './StatefulNode';
 import Fragment from './Fragment';
+import Primitive from './Primitive';
 import Util from './util';
 
 export default class Core {
+  static Primitive = Primitive;
   static typeRegistry = [
     {
       check: klass => StatefulNode.isPrototypeOf(klass),
@@ -38,5 +40,9 @@ export default class Core {
 
   static registerType(typeObject) {
     Core.typeRegistry.push(typeObject);
+  }
+
+  static registerPrimitive(primitive) {
+    Core.Primitive = primitive;
   }
 }
