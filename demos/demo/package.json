@@ -4,6 +4,7 @@
   "main": "index.js",
   "author": "geej",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "server": "webpack-dev-server"
   },
