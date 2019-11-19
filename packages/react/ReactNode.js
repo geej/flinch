@@ -1,14 +1,12 @@
 import { StatefulNode, Util } from '@flinch/core';
-
-const events = [];
-let eventTimeout;
+import effect from '@flinch/effect';
 
 export default class ReactNode extends StatefulNode {
-  __mounted = false;
+  _mounted = false;
 
   handleContextChange(value) {
     this.reactComponent.context = value || {};
-    this.reactComponent.forceUpdate();
+    this.forceUpdate();
   }
 
   getLegacyContext() {
@@ -40,45 +38,31 @@ export default class ReactNode extends StatefulNode {
       }
 
       this.reactComponent = new this.component(this.props, context || {});
+      this.state = this.reactComponent._tempState;
       this.reactComponent.flinchNode = this;
     }
     this.reactComponent.context = context;
 
-    // componentDidUpdate will fire after this draw cycle is complete, so it's okay to store the
-    // timeout now. This also ensures that CDU will fire before CDM of the children, which is
-    // consistent with React's behavior.
-
-    // Parent CDM needs to occur before child is mounted, which means... what does this mean?
-    const oldProps = this.props;
-    const oldState = this.reactComponent.state;
-
-    if (this.__mounted) {
-      events.push(() => this.reactComponent.componentDidUpdate(oldProps, oldState));
-    }
-
-    this.reactComponent.state = {
-      ...this.reactComponent.state,
-      ...this.component.getDerivedStateFromProps(newProps || {}, this.reactComponent.state)
+    this.state = {
+      ...this.state,
+      ...this.component.getDerivedStateFromProps(newProps || {}, this.state)
     };
 
     super.update(newProps);
-
-    if (!this.__mounted) {
-      this.__mounted = true;
-      events.push(() => this.reactComponent.componentDidMount());
-    }
-
-    if (!eventTimeout) {
-      eventTimeout = requestAnimationFrame(() => {
-        let event;
-        while ((event = events.shift())) event();
-        eventTimeout = null;
-      });
-    }
   }
 
   render() {
     return this.reactComponent.render();
+  }
+
+  @effect((props, state) => [props, state])
+  handleComponentUpdates(props, state) {
+    if (this._mounted) {
+      this.reactComponent.componentDidUpdate(props, state);
+    } else {
+      this._mounted = true;
+      this.reactComponent.componentDidMount();
+    }
   }
 
   unmount() {

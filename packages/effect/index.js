@@ -1,50 +1,55 @@
+import { Node } from '@flinch/core';
+
 const events = [];
 let eventTimeout;
 
-export default function effect(...keys) {
-  return function(target, name, descriptor) {
-    if (!target._lifecycleCallbacks) {
-      target._lifecycleCallbacks = [];
-
-      const update = target.update;
-
-      target.update = function(newProps) {
-        const changedProps = (newProps &&
-          Object.keys(this.props)
-            .concat(Object.keys(newProps))
-            .reduce((memo, key) => {
-              if (newProps[key] !== this.props[key]) {
-                memo.add(key);
-              }
-              return memo;
-            }, new Set(['$all']))) || ['$all'];
-
-        const result = update.apply(this, [newProps]);
-        if (!this._mounted) {
-          this._mounted = true;
-          events.push(() => target._lifecycleCallbacks.map(cb => cb.callback.apply(this)));
-        } else {
-          target._lifecycleCallbacks.forEach(cb => {
-            if (cb.keys.filter(prop => Array.from(changedProps).includes(prop)).length) {
-              events.push(() => cb.callback.apply(this));
-            }
-          });
-        }
-
-        if (!eventTimeout) {
-          eventTimeout = requestAnimationFrame(() => {
-            let event;
-            while ((event = events.shift())) event();
-            eventTimeout = null;
-          });
-        }
-
-        return result;
-      };
+function forEachEffectPushIf(context, target, matchFn) {
+  target._effects.forEach(effect => {
+    const lastValues = effect.values;
+    const newValues = effect.valueFn && effect.valueFn(context.props, context.state, context);
+    if (matchFn(lastValues, newValues)) {
+      effect.values = newValues;
+      events.push(() => effect.callback.apply(context, lastValues));
     }
+  });
+}
 
-    target._lifecycleCallbacks.push({ keys, callback: target[name] });
+function decorate(valueFn, target, name, descriptor) {
+  if (!target._effects) {
+    target._effects = [];
 
-    return descriptor;
-  };
+    const update = target.update;
+
+    target.update = function(newProps) {
+      // Component did update
+      forEachEffectPushIf(this, target, (lastValues, newValues) => lastValues && lastValues.some((value, index) => value !== newValues[index]));
+
+      const result = update.apply(this, [newProps]);
+
+      // Component did mount
+      forEachEffectPushIf(this, target, lastValues => !lastValues);
+
+      if (!eventTimeout) {
+        eventTimeout = requestAnimationFrame(() => {
+          let event;
+          while ((event = events.shift())) event();
+          eventTimeout = null;
+        });
+      }
+
+      return result;
+    };
+  }
+
+  target._effects.push({ valueFn, values: undefined, callback: target[name] });
+
+  return descriptor;
+}
+
+export default function effect(...args) {
+  if (args[0] && args[0] instanceof Node) {
+    return decorate(null, ...args);
+  } else {
+    return (target, name, descriptor) => decorate(args[0] || (() => [ true ]), target, name, descriptor);
+  }
 }

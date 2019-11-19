@@ -4,5 +4,8 @@
   "description": "Lifecycle hooks for Flinch",
   "main": "index.js",
   "author": "geej",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@flinch/core": "0.0.1"
+  }
 }

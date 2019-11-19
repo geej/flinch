@@ -21,11 +21,15 @@ export default class Node {
     this.childNode = this.updateChildren(this.childNode, this.render());
   }
 
-  forceUpdate() {
+  forceUpdate(callback) {
     this.update();
 
     const node = Util.findClosestAncestorWhere(this, node => !node.parent || node.root);
-    return node.draw();
+    const dom = node.draw();
+
+    if (callback) callback();
+
+    return dom;
   }
 
   unmount() {

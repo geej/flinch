@@ -24,23 +24,32 @@ export default class Component {
   }
 
   context = {};
-  state = {};
+
+  set state(value) {
+    if (this.flinchNode) {
+      this.flinchNode.state = value;
+    } else {
+      this._tempState = value;
+    }
+  }
+
+  get state() {
+    if (this.flinchNode) {
+      return this.flinchNode.state;
+    } else {
+      return this._tempState;
+    }  }
 
   get props() {
     return this.flinchNode.props;
   }
 
   forceUpdate(callback) {
-    this.flinchNode.forceUpdate();
-    callback && callback();
+    this.flinchNode.forceUpdate(callback);
   }
 
   setState(state, callback = () => {}) {
-    requestAnimationFrame(() => {
-      const newState = typeof state === 'function' ? state(this.state) : state;
-      this.state = { ...this.state, ...newState };
-      this.forceUpdate(() => callback(this.state));
-    });
+    this.flinchNode.setState(state, callback);
   }
 }
 
