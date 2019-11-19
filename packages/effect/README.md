@@ -7,13 +7,23 @@ Effect is a method decorator for StatefulNodes that is similar to useEffect in R
 import effect from '@flinch/effect';
 
 class MyComponent extends StatefulNode {
-  @effect('aProp', 'bProp')
-  handleChange() {
-    console.log('aProp or bProp changed!');
+  @effect(props => [ prop.a, prop.b ])
+  handleChange(oldA, oldB) {
+    console.log('a or b changed!');
+  }
+
+  @effect
+  handleUpdate() {
+    console.log('this will fire every update');
+  }
+
+  @effect()
+  handleMount() {
+    console.log('this will only fire on mount');
   }
 
   render() {
-    return <div>{ this.props.aProp }</div>;
+    return <div>{ this.props.a }</div>;
   }
 }
 ~~~~
