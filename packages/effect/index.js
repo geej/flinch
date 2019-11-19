@@ -3,6 +3,17 @@ import { Node } from '@flinch/core';
 const events = [];
 let eventTimeout;
 
+function forEachEffectPushIf(context, target, matchFn) {
+  target._effects.forEach(effect => {
+    const lastValues = effect.values;
+    const newValues = effect.valueFn && effect.valueFn(context.props, context.state, context);
+    if (matchFn(lastValues, newValues)) {
+      effect.values = newValues;
+      events.push(() => effect.callback.apply(context, lastValues));
+    }
+  });
+}
+
 function decorate(valueFn, target, name, descriptor) {
   if (!target._effects) {
     target._effects = [];
@@ -10,16 +21,13 @@ function decorate(valueFn, target, name, descriptor) {
     const update = target.update;
 
     target.update = function(newProps) {
+      // Component did update
+      forEachEffectPushIf(this, target, (lastValues, newValues) => lastValues && lastValues.some((value, index) => value !== newValues[index]));
+
       const result = update.apply(this, [newProps]);
 
-      target._effects.forEach(effect => {
-        const newValues = effect.valueFn && effect.valueFn(this.props, this.state, this);
-        if (!effect.lastValues || effect.lastValues.some((value, index) => value !== newValues[index])) {
-          events.push(() => effect.callback.apply(this));
-        }
-
-        effect.lastValues = newValues;
-      });
+      // Component did mount
+      forEachEffectPushIf(this, target, lastValues => !lastValues);
 
       if (!eventTimeout) {
         eventTimeout = requestAnimationFrame(() => {
@@ -33,7 +41,7 @@ function decorate(valueFn, target, name, descriptor) {
     };
   }
 
-  target._effects.push({ valueFn, lastValues: undefined, callback: target[name] });
+  target._effects.push({ valueFn, values: undefined, callback: target[name] });
 
   return descriptor;
 }
