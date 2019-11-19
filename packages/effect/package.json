@@ -2,7 +2,7 @@
   "name": "@flinch/effect",
   "version": "0.0.1",
   "description": "Lifecycle hooks for Flinch",
-  "main": "index.js",
+  "main": "dist/index.js",
   "author": "geej",
   "license": "MIT",
   "dependencies": {

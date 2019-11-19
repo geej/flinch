@@ -2,7 +2,7 @@
   "name": "@flinch/react",
   "version": "0.0.1",
   "description": "React compatibility layer for Flinch",
-  "main": "index.js",
+  "main": "dist/index.js",
   "author": "geej",
   "license": "MIT",
   "dependencies": {

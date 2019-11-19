@@ -2,7 +2,7 @@
   "name": "@flinch/portal",
   "version": "0.0.1",
   "description": "Portals for Flinch",
-  "main": "index.js",
+  "main": "dist/index.js",
   "author": "geej",
   "license": "MIT",
   "dependencies": {

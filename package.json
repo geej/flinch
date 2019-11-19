@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist --nohoist @material-ui/core --nohoist @material-ui/icons",
-    "prettier": "prettier --write '**/*.js'"
+    "prettier": "prettier --write '**/*.js'",
+    "build": "lerna exec --parallel 'babel --root-mode upward src --out-dir dist'"
   },
   "repository": {
     "type": "git",
@@ -18,12 +19,21 @@
   },
   "homepage": "https://github.com/geej/flinch#readme",
   "devDependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/plugin-proposal-decorators": "^7.7.0",
+    "@babel/plugin-proposal-export-default-from": "^7.5.2",
+    "@babel/plugin-transform-react-jsx": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
     "husky": "^3.0.9",
     "lerna": "^3.18.3",
     "prettier": "^1.18.2",
     "pretty-quick": "^2.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@babel/polyfill": "^7.7.0"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"
