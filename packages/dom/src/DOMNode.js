@@ -95,4 +95,8 @@ export default class DOMNode extends Fragment {
       }
     });
   }
+
+  getRef() {
+    return this.root;
+  }
 }

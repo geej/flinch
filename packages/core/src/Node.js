@@ -14,7 +14,7 @@ export default class Node {
     }
   }
 
-  update(props = this.props) {
+  update(props = this.props || {}) {
     const { ref, ...otherProps } = props;
     this._ref = ref;
     this.props = otherProps;
@@ -47,6 +47,6 @@ export default class Node {
   }
 
   getRef() {
-    return this.root || this;
+    return this;
   }
 }
