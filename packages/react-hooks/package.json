@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "author": "geej",
   "license": "MIT",
+  "private": true,
   "repository": "https://github.com/geej/flinch/tree/master/packages/react-hooks",
   "dependencies": {
     "@flinch/core": "^0.0.2"
