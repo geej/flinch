@@ -51,6 +51,5 @@ class MyStatefulNode extends StatefulNode {
 * [@flinch/effect](packages/effect)
 * [@flinch/mobx](packages/mobx)
 * [@flinch/portal](packages/portal)
-* [@flinch/props-defaults](packages/props-defaults)
 * [@flinch/react](packages/react)
 * [@flinch/react-hooks](packages/react-hooks)

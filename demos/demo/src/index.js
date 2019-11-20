@@ -1,6 +1,5 @@
 import Flinch, { StatefulNode } from '@flinch/core';
-import '@flinch/props-defaults';
-import { render } from '@flinch/dom';
+import render from '@flinch/dom';
 import { observer } from '@flinch/mobx';
 import { observable } from 'mobx';
 import effect from '@flinch/effect';

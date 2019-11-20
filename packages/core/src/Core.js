@@ -29,6 +29,7 @@ export default class Core {
       if (type.check(tag)) {
         const Klass = type.getClass(tag);
         const fullProps = {
+          ...tag.defaultProps,
           ...Util.cleanProps(props),
           children: Util.getFlatChildren(children).length !== 0 ? children : props && props.children
         };

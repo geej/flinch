@@ -11,7 +11,6 @@
     "@flinch/core": "^0.0.2",
     "@flinch/dom": "^0.0.2",
     "@flinch/effect": "^0.0.2",
-    "@flinch/portal": "^0.0.2",
-    "@flinch/props-defaults": "^0.0.2"
+    "@flinch/portal": "^0.0.2"
   }
 }

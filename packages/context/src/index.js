@@ -1,5 +1,4 @@
 import { StatefulNode, Util } from '@flinch/core';
-import '@flinch/props-defaults';
 import effect from '@flinch/effect';
 
 export function createContext(value) {
