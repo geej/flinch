@@ -39,10 +39,18 @@ export default class Core {
   }
 
   static registerType(typeObject) {
-    Core.typeRegistry.push(typeObject);
+    if (typeof typeObject.check === 'function' && typeof typeObject.getClass === 'function') {
+      Core.typeRegistry.push(typeObject);
+    } else {
+      throw new Error('Cannot register type with invalid format');
+    }
   }
 
   static registerPrimitive(primitive) {
-    Core.Primitive = primitive;
+    if (Primitive.isPrototypeOf(primitive)) {
+      Core.Primitive = primitive;
+    } else {
+      throw new Error('Cannot register primitive that does not extend base class');
+    }
   }
 }

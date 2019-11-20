@@ -1,10 +1,14 @@
 jest.mock('../util', () => ({
-  updateNode: jest.fn(),
-  findClosestAncestorWhere: jest.fn(),
-  getFlatChildren: jest.fn()
+  __esModule: true,
+  default: {
+    updateNode: jest.fn(),
+    findClosestAncestorWhere: jest.fn(),
+    getFlatChildren: jest.fn(),
+    cleanProps: jest.fn()
+  }
 }));
 
-import * as Util from '../util';
+import Util from '../util';
 import Node from '../Node';
 
 describe('Node', () => {
