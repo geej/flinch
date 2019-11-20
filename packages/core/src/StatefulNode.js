@@ -7,7 +7,7 @@ export default class StatefulNode extends Node {
     requestAnimationFrame(() => {
       const newState = typeof state === 'function' ? state(this.state) : state;
       this.state = { ...this.state, ...newState };
-      this.forceUpdate(() => callback());
+      this.forceUpdate(callback);
     });
   }
 }

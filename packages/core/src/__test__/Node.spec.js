@@ -1,4 +1,3 @@
-// Util introduces some circular dependencies
 jest.mock('../util', () => ({
   updateNode: jest.fn(),
   findClosestAncestorWhere: jest.fn(),
