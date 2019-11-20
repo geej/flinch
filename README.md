@@ -1,6 +1,7 @@
 # flinch
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 ![GitHub](https://img.shields.io/github/license/geej/flinch)
+![](https://github.com/geej/flinch/workflows/Node%20CI/badge.svg)
 
 Flinch is a lightweight, modular Javascript framework that is built for simplicity and readability. Modules are provided
 for popular features like context, lifecycle events, portals, and more.
