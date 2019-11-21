@@ -14,11 +14,11 @@ import Node from '../Node';
 describe('Node', () => {
   test('constructor should set props and component', () => {
     const component = () => {};
-    const props = {};
-    const node = new Node(component, props);
+    const props = { a: 1 };
+    const node = new Node(component, { ref: () => {}, ...props });
 
     expect(node.component).toBe(component);
-    expect(node.props).toBe(props);
+    expect(node.props).toEqual(props);
   });
 
   test('render should throw', () => {

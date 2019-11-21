@@ -1,7 +1,8 @@
 import Util from './util';
 
 export default class Node {
-  constructor(component, props) {
+  constructor(component, { ref, ...props } = {}) {
+    this._handleRef = ref;
     this.props = props;
     this.component = component;
   }

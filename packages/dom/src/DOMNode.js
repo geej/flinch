@@ -13,7 +13,7 @@ export default class DOMNode extends Fragment {
   draw() {
     const tag = this.root || this.getTag(this.component);
 
-    let { children, style, className, ...otherProps } = this.props;
+    let { children, style, className, ...otherProps } = this.props || {};
 
     const actions = [];
     for (let key in otherProps) {
@@ -29,6 +29,7 @@ export default class DOMNode extends Fragment {
           this._eventListeners[action] = otherProps[key];
         }
       } else if (otherProps[key] || otherProps[key] === 0) {
+        // TODO: Need to unset stale attributes
         tag.setAttribute(key, otherProps[key]);
       }
     }
@@ -46,7 +47,7 @@ export default class DOMNode extends Fragment {
 
     if (style) {
       if (this._styleKeys) {
-        this._styleKeys.forEach(key => delete tag.style[key]);
+        this._styleKeys.forEach(key => tag.style[key] = '');
       }
 
       Object.keys(style).forEach(key => {
