@@ -26,9 +26,9 @@ describe('Node', () => {
     expect(() => node.render()).toThrow();
   });
 
-  test('this.ref should return self', () => {
+  test('getRef should return self', () => {
     const node = new Node(() => {});
-    expect(node.ref).toBe(node);
+    expect(node.getRef()).toBe(node);
   });
 
   test('unmount should call unmount on all children', () => {

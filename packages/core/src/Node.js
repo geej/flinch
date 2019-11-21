@@ -41,11 +41,11 @@ export default class Node {
 
   draw() {
     const node = Util.getFlatChildren(this.childNode).map(child => child.draw());
-    if (this._handleRef) this._handleRef(this.ref);
+    if (this._handleRef) this._handleRef(this.getRef());
     return node;
   }
 
-  get ref() {
+  getRef() {
     return this;
   }
 }
