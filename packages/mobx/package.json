@@ -10,5 +10,8 @@
     "@flinch/core": "^0.0.2",
     "@flinch/effect": "^0.0.2",
     "mobx": "^5.14.2"
+  },
+  "devDependencies": {
+    "@flinch/dom": "^0.0.2"
   }
 }

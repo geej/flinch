@@ -1,6 +1,6 @@
 import Flinch, { StatefulNode } from '@flinch/core';
 import render from '@flinch/dom';
-import { observer } from '@flinch/mobx';
+import observer from '@flinch/mobx';
 import { observable } from 'mobx';
 import effect from '@flinch/effect';
 import { createContext } from '@flinch/context';
@@ -23,7 +23,7 @@ class StatefulComponent2 extends StatefulNode {
 
   render() {
     return (
-      <div onClick={() => (this.clicked = this.clicked + 1)} style={this.clicked > 0 && 'background-color: red; '}>
+      <div onClick={() => (this.clicked = this.clicked + 1)}>
         <FunctionalComponent counter={this.clicked} />
       </div>
     );
@@ -65,7 +65,7 @@ class StatefulComponent extends StatefulNode {
           <button onClick={() => this.setState({ clicked: this.state.clicked + 1 })}>+1</button>
           <FunctionalComponent counter={this.state.clicked} />
           {this.state.clicked < 10 && 'This will go away at 10'}
-          <StatefulComponent3 counter={this.state.clicked} />
+          <StatefulComponent2 counter={this.state.clicked} />
           <Consumer>{value => <FunctionalComponent counter={`Via Context: ${value}`} />}</Consumer>
           {this.props.children}
         </Provider>
