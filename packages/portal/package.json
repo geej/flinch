@@ -7,6 +7,7 @@
   "license": "MIT",
   "repository": "https://github.com/geej/flinch/tree/master/packages/portal",
   "dependencies": {
-    "@flinch/core": "^0.0.2"
+    "@flinch/core": "^0.0.2",
+    "@flinch/dom": "^0.0.2"
   }
 }
