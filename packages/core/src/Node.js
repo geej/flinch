@@ -1,7 +1,8 @@
 import Util from './util';
 
 export default class Node {
-  constructor(component, props) {
+  constructor(component, { ref, ...props } = {}) {
+    this._handleRef = ref;
     this.props = props;
     this.component = component;
   }
@@ -14,20 +15,19 @@ export default class Node {
     }
   }
 
-  update(props = this.props || {}) {
-    const { ref, ...otherProps } = props;
-    this._ref = ref;
-    this.props = otherProps;
+  update({ ref, ...props } = this.props || {}) {
+    if (ref) this._handleRef = ref;
+    this.props = props;
     this.childNode = this.updateChildren(this.childNode, this.render());
   }
 
-  forceUpdate(callback) {
+  forceUpdate(callback = () => null) {
     this.update();
 
     const node = Util.findClosestAncestorWhere(this, node => !node.parent || node.root);
     const dom = node.draw();
 
-    if (callback) callback();
+    callback();
 
     return dom;
   }
@@ -42,7 +42,7 @@ export default class Node {
 
   draw() {
     const node = Util.getFlatChildren(this.childNode).map(child => child.draw());
-    this._ref && this._ref(this.getRef());
+    if (this._handleRef) this._handleRef(this.getRef());
     return node;
   }
 

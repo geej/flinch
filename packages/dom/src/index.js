@@ -10,7 +10,10 @@ import DOMPrimitive from './DOMPrimitive';
  * @param {HTMLElement} target - element onto which to render
  */
 export default function(node, target) {
-  return target.parentNode.replaceChild(node.forceUpdate(), target);
+  if (!target.firstChild) {
+    return target.appendChild(node.forceUpdate());
+  }
+  return target.replaceChild(node.forceUpdate(), target.firstChild);
 }
 
 Flinch.registerType({
