@@ -63,7 +63,7 @@ export default class DOMNode extends Fragment {
     this._drawChildren(tag);
 
     this.root = tag;
-    this._ref && this._ref(tag);
+    if (this._handleRef) this._handleRef(this.ref);
     return tag;
   }
 
@@ -96,7 +96,7 @@ export default class DOMNode extends Fragment {
     });
   }
 
-  getRef() {
+  get ref() {
     return this.root;
   }
 }
