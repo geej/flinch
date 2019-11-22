@@ -103,7 +103,6 @@ describe('@flinch/react', () => {
   test('flinch should be able to register components as ReactNodes', () => {
     class TestComponent extends Component {}
     const result = Flinch.create(TestComponent);
-    console.log(result);
     expect(result instanceof ReactNode).toBe(true);
   });
 });

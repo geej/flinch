@@ -15,7 +15,7 @@ const cloneElement = (element, props, children) =>
       children: children || (props && props.children) || (element.props && element.props.children)
     })
   });
-const createFactory = Klass => (props, children) => Flinch.create(Klass, props, ...children);
+const createFactory = Klass => (props, children) => Flinch.create(Klass, props, ...(children || []));
 
 /*
   Find the closest child that is a DOMNode. If that node is mounted, return the mounted Element.

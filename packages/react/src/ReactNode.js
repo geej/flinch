@@ -38,7 +38,7 @@ export default class ReactNode extends StatefulNode {
       }
 
       this.reactComponent = new this.component(this.props, context || {});
-      this.state = this.reactComponent._tempState;
+      this.state = this.reactComponent._state;
       this.reactComponent.flinchNode = this;
     }
     this.reactComponent.context = context;
@@ -48,9 +48,9 @@ export default class ReactNode extends StatefulNode {
       ...this.component.getDerivedStateFromProps(newProps || {}, this.state)
     };
 
-    if (this.reactComponent.shouldComponentUpdate && !this.reactComponent.shouldComponentUpdate(newProps, newState)) {
-      return;
-    }
+    // if (this.reactComponent.shouldComponentUpdate && !this.reactComponent.shouldComponentUpdate(newProps, newState)) {
+    //   return;
+    // }
 
     this.state = newState;
 
