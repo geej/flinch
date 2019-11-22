@@ -3,7 +3,7 @@ import render from '@flinch/dom';
 import observer from '@flinch/mobx';
 import { observable } from 'mobx';
 import effect from '@flinch/effect';
-import { createContext } from '@flinch/context';
+import createContext from '@flinch/context';
 
 const { Provider, Consumer } = createContext(2);
 

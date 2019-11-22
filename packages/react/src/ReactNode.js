@@ -43,10 +43,16 @@ export default class ReactNode extends StatefulNode {
     }
     this.reactComponent.context = context;
 
-    this.state = {
+    const newState =  {
       ...this.state,
       ...this.component.getDerivedStateFromProps(newProps || {}, this.state)
     };
+
+    if (this.reactComponent.shouldComponentUpdate && !this.reactComponent.shouldComponentUpdate(newProps, newState)) {
+      return;
+    }
+
+    this.state = newState;
 
     super.update(newProps);
   }
@@ -58,15 +64,15 @@ export default class ReactNode extends StatefulNode {
   @effect((props, state) => [props, state])
   handleComponentUpdates(props, state) {
     if (this._mounted) {
-      this.reactComponent.componentDidUpdate(props, state);
+      if (this.reactComponent.componentDidUpdate) this.reactComponent.componentDidUpdate(props, state);
     } else {
       this._mounted = true;
-      this.reactComponent.componentDidMount();
+      if (this.reactComponent.componentDidMount) this.reactComponent.componentDidMount();
     }
   }
 
   unmount() {
-    this.reactComponent.componentWillUnmount();
+    if (this.reactComponent.componentWillUnmount) this.reactComponent.componentWillUnmount();
     super.unmount();
   }
 

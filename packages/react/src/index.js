@@ -1,7 +1,7 @@
 import render from '@flinch/dom';
-import { createContext } from '@flinch/context';
+import createContext from '@flinch/context';
 import PortalNode from '@flinch/portal';
-import Flinch, { Node, Fragment } from '@flinch/core';
+import Flinch, { Node, Fragment, Util } from '@flinch/core';
 import Component from './Component';
 import Children from './Children';
 import ReactNode from './ReactNode';
@@ -9,13 +9,13 @@ import ReactNode from './ReactNode';
 const createElement = (...args) => Flinch.create(...args);
 const cloneElement = (element, props, children) =>
   Object.assign(Object.create(Object.getPrototypeOf(element)), element, {
-    props: {
+    props: Util.cleanProps({
       ...element.props,
       ...props,
-      children: children || props.children || (element.props && element.props.children)
-    }
+      children: children || (props && props.children) || (element.props && element.props.children)
+    })
   });
-const createFactory = Klass => (props, children) => Flinch.create(Klass, props, ...(children || []));
+const createFactory = Klass => (props, children) => Flinch.create(Klass, props, ...children);
 
 /*
   Find the closest child that is a DOMNode. If that node is mounted, return the mounted Element.

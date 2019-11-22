@@ -1,55 +1,52 @@
 export default class Component {
   static contextType = null;
+  static getDerivedStateFromProps(props, state) { return state; }
 
-  constructor(props, context) {}
+  context = {};
 
-  static getDerivedStateFromProps(props, state) {
-    return state;
+  constructor(props) {
+    this._props = props;
   }
-  componentDidMount() {}
-  componentDidUpdate(prevProps, prevState, snapshot) {}
-  getSnapshotBeforeUpdate(prevProps, prevState) {
-    return null;
-  }
-  componentWillUnmount() {}
-  shouldComponentUpdate(nextProps, nextState) {}
 
-  // Legacy
-  //componentWillMount() {}
-  //UNSAFE_componentWillUpdate(nextProps, nextState) {}
-  //UNSAFE_componentWillReceiveProps(nextProps) {}
+  // Supported
+  // componentDidMount() {}
+  // componentDidUpdate(prevProps, prevState, snapshot) {}
+  // componentWillUnmount() {}
+
+  // Will Support
+  // getSnapshotBeforeUpdate(prevProps, prevState) {}
+  // shouldComponentUpdate(nextProps, nextState) {}
+
+  // Legacy - Unsupported
+  // componentWillMount() {}
+  // UNSAFE_componentWillUpdate(nextProps, nextState) {}
+  // UNSAFE_componentWillReceiveProps(nextProps) {}
 
   get type() {
     return this.constructor;
   }
 
-  context = {};
-
   set state(value) {
     if (this.flinchNode) {
       this.flinchNode.state = value;
     } else {
-      this._tempState = value;
+      this._state = value;
     }
   }
 
   get state() {
-    if (this.flinchNode) {
-      return this.flinchNode.state;
-    } else {
-      return this._tempState;
-    }
+    return this.flinchNode ? this.flinchNode.state : this._state;
   }
 
   get props() {
-    return this.flinchNode.props;
+    return this.flinchNode ? this.flinchNode.props : this._props;
   }
 
   forceUpdate(callback) {
     this.flinchNode.forceUpdate(callback);
   }
 
-  setState(state, callback = () => {}) {
+  setState(state, callback) {
     this.flinchNode.setState(state, callback);
   }
 }

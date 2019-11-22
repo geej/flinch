@@ -1,7 +1,7 @@
 import { StatefulNode, Util } from '@flinch/core';
 import effect from '@flinch/effect';
 
-export function createContext(value) {
+export default function createContext(value) {
   class Provider extends StatefulNode {
     static defaultProps = { value };
     callbacks = [];

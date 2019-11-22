@@ -20,7 +20,7 @@ const Util = {
         oldNode.update(newNode);
         return oldNode;
       } else {
-        oldNode && oldNode.unmount();
+        oldNode && oldNode.unmount && oldNode.unmount();
         return new Core.Primitive(newNode);
       }
     }
